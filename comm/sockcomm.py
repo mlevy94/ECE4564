@@ -7,58 +7,58 @@ import logging
 
 class SocketComm:
   
-    header = b'\x00\xff'
-    headerSize = len(header)
-    lengthBytes = 2
-    
-    def __init__(self, *args, **kargs):
-      self.logger = logging.getLogger(__name__)
-      self.socket = socket.socket()
-      self.queue = queue.Queue()
-    
-    def recv(self):
-      return self.queue.get()
-        
-    def _threadRead(self, client, addr, readQ):
-      try:
-        while True:
-          readData = client.recv(4096)
-          while readData:
-            start = readData.find(self.header)
-            if start == -1:  # don't have any data left.
-              break
-            readData = readData[start:]  # clear initial stuff as an error recovery method
-            length = int.from_bytes(readData[self.headerSize:self.headerSize + self.lengthBytes], "big")
-            if length + self.headerSize + self.lengthBytes < len(readData):  # don't have all data for next message
-              break
-            readData = readData[self.headerSize + self.lengthBytes:]  # remove header information. Simplifies next line
-            serialData = readData[:length]
-            data = pickle.loads(serialData)
-            readQ.put((client, data))
-            self.logger.info("[{}]Message Received: {}".format(addr, data))
-            readData = readData[length:]  # remove data just read
-      except OSError:  # socket closed. Remove client references.
-        self._cleanup(client, addr)
-        
-    def _write(self, message, client, addr):
-      try:
-        serialData = pickle.dumps(message)
-      except TypeError:
-        print("Message could not be serialized")
-        return
-      client.sendall(self.header + len(serialData).to_bytes(self.lengthBytes, "big") + serialData)
-      self.logger.info("[{}]Message Sent: {}".format(addr, message))
+  header = b'\x00\xff'
+  headerSize = len(header)
+  lengthBytes = 2
+  
+  def __init__(self, *args, **kargs):
+    self.logger = logging.getLogger(__name__)
+    self.socket = socket.socket()
+    self.queue = queue.Queue()
+  
+  def recv(self):
+    return self.queue.get()
       
-    def _threadWrite(self, client, addr, writeQ):
-      try:
-        while True:
-          data = writeQ.get()
-          self._write(data, client, addr)
-      except OSError:  # socket closed. Remove client references.
-        self._cleanup(client, addr)
-        
-    def _cleanup(self, client, addr):
-      pass
+  def _threadRead(self, client, addr, readQ):
+    try:
+      while True:
+        readData = client.recv(4096)
+        while readData:
+          start = readData.find(self.header)
+          if start == -1:  # don't have any data left.
+            break
+          readData = readData[start:]  # clear initial stuff as an error recovery method
+          length = int.from_bytes(readData[self.headerSize:self.headerSize + self.lengthBytes], "big")
+          if length + self.headerSize + self.lengthBytes < len(readData):  # don't have all data for next message
+            break
+          readData = readData[self.headerSize + self.lengthBytes:]  # remove header information. Simplifies next line
+          serialData = readData[:length]
+          data = pickle.loads(serialData)
+          readQ.put((client, data))
+          self.logger.info("[{}]Message Received: {}".format(addr, data))
+          readData = readData[length:]  # remove data just read
+    except OSError:  # socket closed. Remove client references.
+      self._cleanup(client, addr)
+      
+  def _write(self, message, client, addr):
+    try:
+      serialData = pickle.dumps(message)
+    except TypeError:
+      print("Message could not be serialized")
+      return
+    client.sendall(self.header + len(serialData).to_bytes(self.lengthBytes, "big") + serialData)
+    self.logger.info("[{}]Message Sent: {}".format(addr, message))
+    
+  def _threadWrite(self, client, addr, writeQ):
+    try:
+      while True:
+        data = writeQ.get()
+        self._write(data, client, addr)
+    except OSError:  # socket closed. Remove client references.
+      self._cleanup(client, addr)
+      
+  def _cleanup(self, client, addr):
+    pass
 
 
 class SockClient(SocketComm):
