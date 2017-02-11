@@ -71,7 +71,10 @@ class SockClient(SocketComm):
     self.readThread.start()
     
   def send(self, message):
-    self._write(message, self.socket, self.socket.getsockname()[0])
+    self._write(message, self.socket, self.getIP[0])
+
+  def getIP(self):
+    self.socket.gethostname()
     
   def _cleanup(self, client, addr):
     client.shutdown(socket.SHUT_RDWR)
