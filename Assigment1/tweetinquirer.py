@@ -21,6 +21,7 @@ class SListener(StreamListener):
         data = json.loads(data)
         if data["user"]["id"] == 830234802766888964:
             return True
+
         screenname = data["user"]["screen_name"]
         tweetid = data["id"]
         tweet = data["text"]
@@ -36,16 +37,23 @@ class SListener(StreamListener):
                 self.client = SockClient(addr=address, port=port)
         else:
             self.client = SockClient(addr=address, port=port)
-        # send
-        # recv
+
+        md5 = None
+        self.client.send((md5,question))
+
+        recvMD5, answers = self.client.recv()[1]
+        #verify md5
         for answer in answers:
-            #tweet answer
+            totalanswer = '@{} Team_13"{}"'.format(screenname, answer)
+            if len(totalanswer) >= 140:
+                totalanswer = totalanswer[:137] + '...'
+                api.update_status(totalanswer)
+
+            else:
+                api.update_status(totalanswer)
 
 
-        try:
-            api.update_status('@' + screenname + " reply reply")
-        except:
-            import pdb; pdb.set_trace()
+
         return True
 
     def on_error(self,status):
