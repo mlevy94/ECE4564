@@ -1,7 +1,7 @@
 #!/usr/etc/python3.4
 import wolframalpha
-import sys
 from sockcomm import SockServer
+from md5auth import createMD5, authMD5
 
 
 #Establish connection 
@@ -18,16 +18,16 @@ print("Listening on {}:{}".format(addr, port))
 
 while 1:
     client, (recvMD5, query) = server.recv()
-    # verify md5
+    if not authMD5(recvMD5, query):
+        raise Exception("Bad MD5")
     #query = ' '.join(sys.argv[1:]) # Captures cmd line arguements as query
     print("Query sent to Wolfram Alpha API:", query)
-    res = waClient.query(query) # Submits question to WolframAlpha and stores the response
+    res = waClient.query(query[0]) # Submits question to WolframAlpha and stores the response
     if res["@error"]: # Wait for response
         print("Response:", next(res.results).text)
         returnText = next(res.results).text
         ret = returnText.split('\n')
-        # generate md5
-        md5 = None
+        md5 = createMD5(ret)
         server.send((md5, ret), client)
 
     
