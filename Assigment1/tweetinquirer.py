@@ -33,10 +33,10 @@ class SListener(StreamListener):
 
         if self.client is not None:
             ip = self.client.getIP()
-            if ip != (address, port):
-                self.client = SockClient(addr=address, port=port)
+            if ip != (address, int(port)):
+                self.client = SockClient(addr=address, port=int(port))
         else:
-            self.client = SockClient(addr=address, port=port)
+            self.client = SockClient(addr=address, port=int(port))
 
         md5 = None
         self.client.send((md5,question))
