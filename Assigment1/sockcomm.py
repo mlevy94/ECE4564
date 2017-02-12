@@ -71,7 +71,7 @@ class SockClient(SocketComm):
     self.readThread.start()
     
   def send(self, message):
-    self._write(message, self.socket, self.getIP[0])
+    self._write(message, self.socket, self.getIP)
 
   def getIP(self):
     self.socket.gethostname()
