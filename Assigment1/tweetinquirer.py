@@ -2,6 +2,7 @@ import tweepy
 from tweepy import Stream
 from tweepy.streaming import StreamListener
 from sockcomm import SockClient
+from md5auth import createMD5, authMD5
 
 import json
 
@@ -29,7 +30,7 @@ class SListener(StreamListener):
 
         address = tweet.split("@4564Team_13 ##")[1].split(":")[0]
         port = tweet.split(":")[1].split("_")[0]
-        question = tweet.split('_"')[1].split('"')[0]
+        question = [tweet.split('_"')[1].split('"')[0]]
 
         if self.client is not None:
             ip = self.client.getIP()
@@ -38,11 +39,12 @@ class SListener(StreamListener):
         else:
             self.client = SockClient(addr=address, port=int(port))
 
-        md5 = None
+        md5 = createMD5(question)
         self.client.send((md5,question))
 
         recvMD5, answers = self.client.recv()[1]
-        #verify md5
+        if not authMD5(recvMD5, answers):
+            raise Exception("Bad MD5")
         for answer in answers:
             totalanswer = '@{} Team_13"{}"'.format(screenname, answer)
             if len(totalanswer) >= 140:
