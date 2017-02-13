@@ -2,6 +2,7 @@
 import wolframalpha
 from sockcomm import SockServer
 from md5auth import createMD5, authMD5
+import socket
 
 
 #Establish connection 
@@ -14,7 +15,7 @@ addr = "0.0.0.0"
 port = 51000
 
 server = SockServer(addr=addr, port=port)
-print("Listening on {}:{}".format(addr, port))
+print("Listening on {}:{}".format(socket.gethostbyname(socket.gethostname()), port))
 
 while 1:
     client, (recvMD5, query) = server.recv()
