@@ -1,5 +1,8 @@
 Dependencies:
-wolfram
+wolframalpha
+
+Must install with:
+sudo pip3 install wolframalph
 
 Run:
 python3 server.py
