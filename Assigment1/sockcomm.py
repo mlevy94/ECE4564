@@ -90,7 +90,7 @@ class SockClient(SocketComm):
 
   # Abstraction.
   def getIP(self):
-    return self.socket.getsockname()
+    return self.socket.getpeername()
     
   # Make sure we clean up nicely.
   def _cleanup(self, client, addr):
