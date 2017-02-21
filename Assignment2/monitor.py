@@ -15,6 +15,7 @@ class LEDController:
   def __init__(self):
     GPIO.setmode(GPIO.BCM)
     GPIO.setup((self.BLUE, self.RED, self.GREEN), GPIO.OUT)
+    GPIO.output((self.BLUE, self.RED, self.GREEN), False)
     self.greenPWM = GPIO.PWM(self.GREEN, 120)
     self.redPWM = GPIO.PWM(self.RED, 120)
     self.queue = queue.Queue()
@@ -26,14 +27,15 @@ class LEDController:
     try:
       while True:
         val = self.queue.get()
-        if self.minVal < val <= self.divPoint2:
-          redVal = (val - self.minVal) / (self.divPoint2 - self.minVal) * 100.0
-        else:
-          redVal = 0.0
-        if self.divPoint1 < val <= self.maxVal:
-          greenVal = (val - self.divPoint1) / (self.maxVal - self.divPoint1) * 100.0
+        if self.minVal <= val < self.divPoint2:
+          greenVal = 100 - ((val - self.minVal) / (self.divPoint2 - self.minVal) * 100.0)
         else:
           greenVal = 0.0
+        if self.divPoint1 < val <= self.maxVal:
+          redVal = (val - self.divPoint1) / (self.maxVal - self.divPoint1) * 100.0
+        else:
+          redVal = 0.0
+        print("Red: {} Green: {}".format(redVal, greenVal))
         self.redPWM.ChangeDutyCycle(redVal)
         self.greenPWM.ChangeDutyCycle(greenVal)
     finally:
