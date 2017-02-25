@@ -2,8 +2,13 @@
 import pika
 import sys
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
+
+credentials = pika.PlainCredentials('ECE4564', 'team13')
+parameters = pika.ConnectionParameters('172.29.120.1',
+                                       5672,
+                                       'jacques',
+                                       credentials)
+connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
 channel.queue_declare(queue='hello')
