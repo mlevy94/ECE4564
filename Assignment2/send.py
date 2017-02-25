@@ -14,6 +14,6 @@ while mess != "quit":
                           routing_key='hello',
                           body=mess)
     print(" [x] Sent", mess)
-    mess = raw_input('Message to send: ')
+    mess = input('Message to send: ')
     
 connection.close()
