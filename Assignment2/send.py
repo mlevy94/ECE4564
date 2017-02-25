@@ -4,7 +4,10 @@ import sys
 
 
 credentials = pika.PlainCredentials('ECE4564', 'team13')
-parameters = pika.ConnectionParameters('jacques',5672,'/',credentials)
+parameters = pika.ConnectionParameters('172.29.120.1',
+                                       5672,
+                                       'jacques',
+                                       credentials)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
