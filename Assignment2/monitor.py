@@ -1,5 +1,6 @@
 from RPi import GPIO
 import queue
+import threading
 
 class LEDController:
   
@@ -8,9 +9,9 @@ class LEDController:
   divPoint1 = (maxVal - minVal) / 4 + minVal
   divPoint2 = (maxVal - minVal) * 3 / 4 + minVal
   
-  RED = 27
+  RED = 4
   GREEN = 17
-  BLUE = 4
+  BLUE = 27
   SPECIAL_SWITCH = 16
   SPECIAL_SWITCH_ON = 20
   HOST_SWITCH = 23
@@ -24,6 +25,8 @@ class LEDController:
     self.greenPWM = GPIO.PWM(self.GREEN, 120)
     self.redPWM = GPIO.PWM(self.RED, 120)
     self.queue = queue.Queue()
+    self.ledThread = threading.Thread(target=self.modLED, daemon=True)
+    self.ledThread.start()
     
   def host_select(self):
     return GPIO.input(self.HOST_SWITCH)
