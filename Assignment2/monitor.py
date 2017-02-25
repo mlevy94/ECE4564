@@ -8,13 +8,13 @@ class LEDController:
   divPoint1 = (maxVal - minVal) / 4 + minVal
   divPoint2 = (maxVal - minVal) * 3 / 4 + minVal
   
-  RED = 25
-  GREEN = 24
-  BLUE = 23
-  SPECIAL_SWITCH = 17
-  SPECIAL_SWITCH_ON = 27
-  HOST_SWITCH = 16
-  HOST_SWITCH_ON = 20
+  RED = 27
+  GREEN = 17
+  BLUE = 4
+  SPECIAL_SWITCH = 16
+  SPECIAL_SWITCH_ON = 20
+  HOST_SWITCH = 23
+  HOST_SWITCH_ON = 24
   
   def __init__(self):
     GPIO.setmode(GPIO.BCM)
