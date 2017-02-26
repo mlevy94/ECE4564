@@ -70,21 +70,21 @@ if __name__ == "__main__":
   fields = parser.parse_args(sys.argv[1:])
   
   ######### rabbitMQ Init code goes here #########
-  if c is not None:
+  if fields.c is not None:
     i = 0
-    while c[i] != ':':  #parse login credentials
+    while fields.c[i] != ':':  #parse login credentials
       i+=1
-    login = c[:i]
-    password = c[i+1:]
+    login = fields.c[:i]
+    password = fields.c[i+1:]
 
   else:                 #attempt to login as guest
     login = 'guest'
     password = 'guest'
 
   credentials = pika.PlainCredentials(login, password)  
-  parameters = pika.ConnectionParameters(b,
+  parameters = pika.ConnectionParameters(fields.b,
                                          5672,
-                                         p,
+                                         fields.p,
                                          credentials)
   connection = pika.BlockingConnection(parameters)  #need error handling
   channel = connection.channel()
@@ -101,5 +101,5 @@ if __name__ == "__main__":
     # Copy the line from inside the print          #
     # statement when sending the data.             #
     channel.basic_publish(exchange='pi_utilization',
-                      routing_key=k,
+                      routing_key=fields.k,
                       body=message)
