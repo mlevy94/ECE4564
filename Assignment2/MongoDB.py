@@ -38,7 +38,7 @@ info = ({"Pi": identity,
 
 #pi1_id = pi1.insert_one(info).inserted_id
 
-print(pi1.find_one({"Pi": "pi1"})["cpu"])
+#print(pi1.find_one({"Pi": "pi1"})["cpu"])
 print(pi1.find({"Pi": "pi1"}).count())
 
 for doc in pi1.find().sort('cpu', pymongo.DESCENDING):
