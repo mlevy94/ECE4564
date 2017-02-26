@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 import time
 import sys
@@ -65,13 +66,15 @@ if __name__ == "__main__":
   parser.add_argument("-p", action="store", default="/")
   parser.add_argument("-c", action="store", default=None)
   parser.add_argument("-k", action="store", required=True)
-  fields = parser.parse_args(sys.argv)
+  fields = parser.parse_args(sys.argv[1:])
   
   ######### rabbitMQ Init code goes here #########
   
   stats = SysStats()
-  print(json.dumps(stats.getStats()))
+  while True:
+    time.sleep(1) # Keep first to avoid divide by 0 error
+    print(json.dumps(stats.getStats()))
   
-  ######## RabbitMQ send code goes here ##########
-  # Copy the line from inside the print          #
-  # statement when sending the data.             #
+    ######## RabbitMQ send code goes here ##########
+    # Copy the line from inside the print          #
+    # statement when sending the data.             #
