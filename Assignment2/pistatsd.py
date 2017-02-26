@@ -1,6 +1,7 @@
 import argparse
 import time
 import sys
+import json
 
 class SysStats:
   
@@ -65,4 +66,12 @@ if __name__ == "__main__":
   parser.add_argument("-c", action="store", default=None)
   parser.add_argument("-k", action="store", required=True)
   fields = parser.parse_args(sys.argv)
-  import pdb; pdb.set_trace()
+  
+  ######### rabbitMQ Init code goes here #########
+  
+  stats = SysStats()
+  print(json.dumps(stats.getStats()))
+  
+  ######## RabbitMQ send code goes here ##########
+  # Copy the line from inside the print          #
+  # statement when sending the data.             #
