@@ -8,6 +8,7 @@ class SysStats:
     # Initialize cpu reading
     self._getCPUTimes()
     # Initialize network utilization
+    self._getNetStats()
     
   def _getCPUTimes(self):
     with open('/proc/stat') as f:
@@ -28,9 +29,9 @@ class SysStats:
       f.readline() # useless. Ignore
       for lineStr in f.readlines():
         line = lineStr.split()
-        interfaces[line[0]] = {
-          "rx":line[1],
-          "tx":line[9]
+        interfaces[line[0].replace(":", "")] = {
+          "rx":int(line[1]),
+          "tx":int(line[9]),
         }
     self.netStats = interfaces
     self.checkTime = time.time()
@@ -41,7 +42,7 @@ class SysStats:
     self._getNetStats()
     delta_time = self.checkTime - last_checkTime
     netstats = {}
-    for interface, value in self.netStats:
+    for interface, value in self.netStats.items():
       last_value = last_netStats[interface]
       netstats[interface] = {
         "rx": int((value["rx"] - last_value["rx"]) / delta_time),
