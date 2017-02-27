@@ -7,15 +7,6 @@ from ledcontroller import LEDController
 
 
 
-def consumeData(routingKey, controller, switchPosition=True):
-  while True:
-    # recv message as message
-    # convert to json
-    # add to database
-    if controller.host_select == switchPosition:
-      controller.queue.put(message["cpu"])
-
-
 
 
 
@@ -35,20 +26,28 @@ if __name__ == "__main__":
   
   try:
     host1 = fields.k[0]
-    recvThread1 = threading.Thread(target=consumeData, args=[host1, led, True], daemon=True)
-    recvThread1.start()
   except IndexError:
     host1 = None
-    recvThread1 = None
     
   try:
     host2 = fields.k[1]
-    recvThread2 = threading.Thread(target=consumeData, args=[host2, led, False], daemon=True)
   except IndexError:
     host2 = None
-    recvThread2 = None
-    recvThread2.start()
-    
+
+
+  def consumeData(ch, method, properties, body):
+    message = json.loads(body)
+    # add to database
+    if led.host_select() ^ (method.routing_key == host1):
+      led.queue.put(message["cpu"])
+      
+  if host1 is not None:
+    # channel declaration 1
+  
+  if host2 is not None:
+    # channel declaration 2
+
+
   input()
     
   

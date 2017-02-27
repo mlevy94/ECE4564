@@ -93,12 +93,6 @@ if __name__ == "__main__":
   stats = SysStats()
   while True:
     time.sleep(1) # Keep first to avoid divide by 0 error
-    message = json.dumps(stats.getStats())
-    print(message)
-  
-    ######## RabbitMQ send code goes here ##########
-    # Copy the line from inside the print          #
-    # statement when sending the data.             #
     channel.basic_publish(exchange='pi_utilization',
                       routing_key=fields.k,
-                      body=message)
+                      body=json.dumps(stats.getStats()))
