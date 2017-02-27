@@ -35,7 +35,7 @@ class SListener(StreamListener):
         address = tweet.split("@4564Team_13 ##")[1].split(":")[0]  # split the tweet into different information
         port = tweet.split(":")[1].split("_")[0]
         question = [tweet.split('_"')[1].split('"')[0]]
-
+        client = None
         if self.client is not None:  # setting up the client
             ip = self.client.getIP()
             if ip != (address, int(port)):

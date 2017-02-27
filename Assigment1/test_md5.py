@@ -1,6 +1,6 @@
 from md5auth import createMD5, authMD5
 
-mystring = input("input test string: ")
+mystring = ("one", "two", "three")
 myhash = createMD5(mystring)
 print (mystring, myhash)
 success = authMD5(myhash, mystring)
