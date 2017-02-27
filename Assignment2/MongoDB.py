@@ -12,7 +12,7 @@ class Client:
     def mongo_insert(self, routing, js):
         pi_id = self.pi.insert_one({"Pi": routing, "info": js}).inserted_id
 
-        print("{}:".format(routing))
+        print("\n{}:".format(routing))
         print("cpu: {} [Hi: {}, Lo: {}]".format(
             js["cpu"],
             next(self.pi.find({}).sort('info.cpu', pymongo.DESCENDING).limit(1))['info']['cpu'],
