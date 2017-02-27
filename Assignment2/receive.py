@@ -18,17 +18,17 @@ if fields.c is not None:
     i+=1
   login = fields.c[:i]
   password = fields.c[i+1:]
-else:                 #attempt to login as guest
-  login = 'guest'
-  password = 'guest'
-
-######### rabbitMQ Init code goes here #########
-credentials = pika.PlainCredentials(login, password)
-parameters = pika.ConnectionParameters(fields.b,
+  credentials = pika.PlainCredentials(login, password)
+  parameters = pika.ConnectionParameters(fields.b,
                                        5672,
                                        fields.p,
                                        credentials)
-connection = pika.BlockingConnection(parameters)
+
+else:                 #attempt to login as guest
+  parameters = pika.ConnectionParameters('localhost')
+  
+connection = pika.BlockingConnection(parameters)  #need error handling
+
 channel = connection.channel()
 channel.exchange_declare(exchange='pi_utilization',
                          type='direct')
