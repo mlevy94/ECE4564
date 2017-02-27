@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
 
   def consumeData(ch, method, properties, body):
-    message = json.loads(body).decode()
+    message = json.loads(body.decode())
     mongoClient.mongo_insert(method.routing_key, message)
     if led.host_select() ^ (method.routing_key == host1):
       led.queue.put(message["cpu"])
