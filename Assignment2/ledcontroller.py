@@ -55,7 +55,7 @@ class LEDController:
             greenVal = 100.0
           if val >= self.divPoint1:
             redVal = 100.0
-        print("Red: {} Green: {}".format(redVal, greenVal))
+        # print("Red: {} Green: {}".format(redVal, greenVal))
         self.redPWM.ChangeDutyCycle(redVal)
         self.greenPWM.ChangeDutyCycle(greenVal)
     finally:
