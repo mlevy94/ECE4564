@@ -1,48 +1,57 @@
 import pymongo
 from pymongo import MongoClient
-
 import json
 
-client = MongoClient('localhost', 27017)
 
-db = client.A2_database
+class Client:
 
-pi = db.pi_collection
-s = '{"routing": "pi1","net": {"lo": {"rx": 0,"tx": 0},"wlan0":{"rx": 708,"tx": 1192},"eth0": {"rx": 0,"tx": 0}},"cpu": 0.8393824}'
-str = json.loads(s)
-identity = str["routing"]
-lorx = str["net"]["lo"]["rx"]
-lotx = str["net"]["lo"]["tx"]
-wlanrx = str["net"]["wlan0"]["rx"]
-wlantx = str["net"]["wlan0"]["tx"]
-ethrx = str["net"]["eth0"]["rx"]
-ethtx = str["net"]["eth0"]["tx"]
-cputime = str["cpu"]
+    global client
+    global db
+    global pi
 
-pi.delete_many({})
-info = ({"Pi": identity,
-         "net": {
-             "lo": {"rx": lorx, "tx": lotx},
-             "wlan0": {"rx": wlanrx, "tx": wlantx},
-             "eth0": {"rx": ethrx, "tx": ethtx}},
-         "cpu": cputime})
+    def create_client(self):
 
-pi_id = pi.insert_one(info).inserted_id
+        client = MongoClient('localhost', 27017)
+        db = client.A2_database
+        pi = db.pi_collection
 
-print(pi.find_one({"Pi": "pi1"})["cpu"])
-print(pi.find({"Pi": "pi1"}).count())
+    def mongo_insert(self, routing, js):
+        pi_id = pi.insert_one({"Pi":routing, "info":js}).inserted_id
 
-if (identity == 'pi1'):
+        print(pi.find_one({"Pi": "pi1"})["cpu"])
+        print(pi.find({"Pi": "pi1"}).count())
+
+        # if (identity == 'pi1'):
+        #
+        #     for doc in pi.find().sort('cpu', pymongo.DESCENDING):
+        #         print('hi: {}'.format(doc["cpu"]))
+        #         break
+        #
+        #     for doc in pi.find().sort('cpu', pymongo.ASCENDING):
+        #         print('lo: {}'.format(doc["cpu"]))
+        #         break
+        #
+        #     for doc in pi.find().sort('net', pymongo.ASCENDING).items():
+        #         for doc2 in pi.find().sort(doc, pymongo.ASCENDING).items():
+        #             print('lo: {}'.format(doc2['tx']))
+        #             print('hi: {}'.format(doc2['rx']))
+        #             break
+        #
+        # if (identity == 'pi2'):
+        #
+        #     for doc in pi.find().sort('cpu', pymongo.DESCENDING):
+        #         print('hi: {}'.format(doc["cpu"]))
+        #         break
+        #
+        #     for doc in pi.find().sort('cpu', pymongo.ASCENDING):
+        #         print('lo: {}'.format(doc["cpu"]))
+        #         break
+        #
+        #     for doc in pi.find().sort('net', pymongo.ASCENDING).items():
+        #         for doc2 in pi.find().sort(doc, pymongo.ASCENDING).items():
+        #             print('lo: {}'.format(doc2['tx']))
+        #             print('hi: {}'.format(doc2['rx']))
+        #             break
 
 
-    for doc in pi.find().sort('cpu', pymongo.DESCENDING):
-        print('hi: {}'.format(doc["cpu"]))
-        break
-
-#print(pi1.find_one({"Pi": "pi1"})["cpu"])
-print(pi.find({"Pi": "pi1"}).count())
-
-
-    for doc in pi.find().sort('cpu', pymongo.ASCENDING):
-        print('lo: {}'.format(doc["cpu"]))
-        break
+if __name__ == "__main__":
