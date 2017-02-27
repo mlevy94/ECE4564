@@ -102,20 +102,24 @@ if __name__ == "__main__":
     channel = connection.channel()
     channel.exchange_declare(exchange='pi_utilization',
                             type='direct')
-    stats = SysStats()
-    while True:
-      time.sleep(1) # Keep first to avoid divide by 0 error
-      # Grab stats
-      message = stats.getStats()
-      print(message)
-      # send stats
-      channel.basic_publish(exchange='pi_utilization',
-                        routing_key=fields.k,
-                        body=json.dumps(message))
-      
-  except KeyboardInterrupt:
-    pass
   except exceptions.ConnectionClosed:
-    print("Connection closed by server.")
-  finally:
-    print("Shutting Down.")
+    "Failure while Connection To Server."
+  else:
+    try:
+      stats = SysStats()
+      while True:
+        time.sleep(1) # Keep first to avoid divide by 0 error
+        # Grab stats
+        message = stats.getStats()
+        print(message)
+        # send stats
+        channel.basic_publish(exchange='pi_utilization',
+                          routing_key=fields.k,
+                          body=json.dumps(message))
+        
+    except KeyboardInterrupt:
+      pass
+    except exceptions.ConnectionClosed:
+      print("Connection closed by server.")
+    finally:
+      print("Shutting Down.")
