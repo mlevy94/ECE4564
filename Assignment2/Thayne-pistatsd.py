@@ -3,17 +3,12 @@ import sys
 import time
 import numpy as np
 import pika
-Raw from __future__ import print_function
-
-# import rabbitmq
-
-
-
+# import rabbitmq?
 
 # read in cmd line arguments 
 cmd_error = "Incorrect command line parameters"
 if len(sys.argv) == 9:
-	if sys.argv[1] = "-b" and sys.argv[3] = "-p" and sys.argv[5] = "-c" and sys.argv[7] = "-k":
+	if sys.argv[1] == "-b" and sys.argv[3] == "-p" and sys.argv[5] == "-c" and sys.argv[7] == "-k":
 		mssBroker = sys.argv[2]
 		vhost = sys.argv[4]
 		hostpass = sys.argv[6]
@@ -21,10 +16,10 @@ if len(sys.argv) == 9:
 	else:
 		print(cmd_error)
 elif len(sys.argv) == 5:
-	if sys.argv[1] = "-b" and sys.argv[3] = "-k" :
+	if sys.argv[1] == "-b" and sys.argv[3] == "-k" :
 		mssBroker = sys.argv[2]
 		vhost = "/"
-		#hostpass =  
+		#hostpass =  NULL ?
 		routekey = sys.argv[4]
 	
 else:
@@ -33,8 +28,8 @@ else:
 # create bindings to RabbitMQ
 
 if len(sys.argv) == 9:
-credentials = pika.PlainCredentials(vhost, hostpass)
-parameters = pika.ConnectionParameters(mssBroker,
+	credentials = pika.PlainCredentials(vhost, hostpass)
+	parameters = pika.ConnectionParameters(mssBroker,
                                          5672,
                                          vhost,
                                          credentials)
@@ -139,7 +134,8 @@ while True:
 
 	 # store data 
 	stats = {"net": {"lo": {"rx": lrxout,"tx": ltxout},"wlan0": {"rx": wrxout,"tx": wtxout},"eth0": {"rx": erxout,"tx": etxout}},"cpu": cpu_out}
-
+	print(stats)
+	
 	#send message to broker
 	channel.basic_publish(exchange='pi_utilization',
 						  routing_key=routekey,
