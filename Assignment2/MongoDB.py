@@ -3,8 +3,8 @@ from pymongo import MongoClient
 
 
 class Client:
-    def create_client(self):
-
+    
+    def __init__(self):
         self.client = MongoClient('localhost', 27017)
         self.db = self.client.A2_database
         self.pi = self.db.pi_collection
