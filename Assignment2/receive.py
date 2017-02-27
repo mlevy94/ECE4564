@@ -39,8 +39,8 @@ channel.queue_bind(exchange='pi_utilization',
                    routing_key=fields.k)
 
 def callback(ch, method, properties, body):
-    message = json.loads(body)
-    print(" [x] Received " % message)
+    message = body
+    print(" [x] Received " message)
 
 channel.basic_consume(callback,
                       queue=queue_name,
