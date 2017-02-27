@@ -3,6 +3,7 @@ import argparse
 import time
 import sys
 import json
+import pika
 
 class SysStats:
   
@@ -69,12 +70,35 @@ if __name__ == "__main__":
   fields = parser.parse_args(sys.argv[1:])
   
   ######### rabbitMQ Init code goes here #########
-  
+  if fields.c is not None:
+    i = 0
+    while fields.c[i] != ':':  #parse login credentials
+      i+=1
+    login = fields.c[:i]
+    password = fields.c[i+1:]
+    credentials = pika.PlainCredentials(login, password)
+    parameters = pika.ConnectionParameters(fields.b,
+                                         5672,
+                                         fields.p,
+                                         credentials)
+
+  else:                 #attempt to login as guest
+    parameters = pika.ConnectionParameters('localhost')
+
+  connection = pika.BlockingConnection(parameters)  #need error handling
+  channel = connection.channel()
+  channel.exchange_declare(exchange='pi_utilization',
+                          type='direct')
+    
   stats = SysStats()
   while True:
     time.sleep(1) # Keep first to avoid divide by 0 error
-    print(json.dumps(stats.getStats()))
+    message = json.dumps(stats.getStats())
+    print(message)
   
     ######## RabbitMQ send code goes here ##########
     # Copy the line from inside the print          #
     # statement when sending the data.             #
+    channel.basic_publish(exchange='pi_utilization',
+                      routing_key=fields.k,
+                      body=message)

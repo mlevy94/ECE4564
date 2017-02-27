@@ -34,9 +34,14 @@ print(pi.find({"Pi": "pi1"}).count())
 
 if (identity == 'pi1'):
 
+
     for doc in pi.find().sort('cpu', pymongo.DESCENDING):
         print('hi: {}'.format(doc["cpu"]))
         break
+
+#print(pi1.find_one({"Pi": "pi1"})["cpu"])
+print(pi.find({"Pi": "pi1"}).count())
+
 
     for doc in pi.find().sort('cpu', pymongo.ASCENDING):
         print('lo: {}'.format(doc["cpu"]))
