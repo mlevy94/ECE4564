@@ -2,12 +2,8 @@
 import argparse
 import json
 import sys
-import threading
+import MongoDB
 from ledcontroller import LEDController
-
-
-
-
 
 
 
@@ -21,6 +17,8 @@ if __name__ == "__main__":
   fields = parser.parse_args(sys.argv[1:])
   
   led = LEDController()
+  mongoClient = MongoDB.Client()
+  mongoClient.create_client()
 
   if fields.c is not None:
     login, password = fields.c.split(":")
@@ -47,7 +45,7 @@ if __name__ == "__main__":
 
   def consumeData(ch, method, properties, body):
     message = json.loads(body)
-    # add to database
+    mongoClient.mongo_insert(method.routing_key, message)
     if led.host_select() ^ (method.routing_key == host1):
       led.queue.put(message["cpu"])
       
@@ -59,7 +57,7 @@ if __name__ == "__main__":
     queue_name1 = result1.method.queue
     channel1.queue_bind(exchange='pi_utilization',
                         queue=queue_name1,
-                       routing_key=host1)
+                        routing_key=host1)
     channel1.basic_consume(consumeData,
                       queue=queue_name1,
                       no_ack=True)
