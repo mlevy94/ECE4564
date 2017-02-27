@@ -76,16 +76,15 @@ if __name__ == "__main__":
       i+=1
     login = fields.c[:i]
     password = fields.c[i+1:]
-
-  else:                 #attempt to login as guest
-    login = 'guest'
-    password = 'guest'
-
-  credentials = pika.PlainCredentials(login, password)  
-  parameters = pika.ConnectionParameters(fields.b,
+    credentials = pika.PlainCredentials(login, password)
+    parameters = pika.ConnectionParameters(fields.b,
                                          5672,
                                          fields.p,
                                          credentials)
+
+  else:                 #attempt to login as guest
+    parameters = pika.ConnectionParameters('localhost')
+
   connection = pika.BlockingConnection(parameters)  #need error handling
   channel = connection.channel()
   channel.exchange_declare(exchange='pi_utilization',
