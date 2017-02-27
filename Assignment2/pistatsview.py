@@ -22,7 +22,17 @@ if __name__ == "__main__":
   
   led = LEDController()
 
-  ######### rabbitMQ Init code goes here #########
+  if fields.c is not None:
+    login, password = fields.c.split(":")
+    credentials = pika.PlainCredentials(login, password)
+    parameters = pika.ConnectionParameters(fields.b,
+                                       5672,
+                                       fields.p,
+                                       credentials)
+  else:                 #attempt to login as guest
+    parameters = pika.ConnectionParameters('localhost')
+  
+  connection = pika.BlockingConnection(parameters)  #need error handling
   
   try:
     host1 = fields.k[0]
@@ -42,10 +52,30 @@ if __name__ == "__main__":
       led.queue.put(message["cpu"])
       
   if host1 is not None:
-    # channel declaration 1
+    channel1 = connection.channel()
+    channel1.exchange_declare(exchange='pi_utilization',
+                             type='direct')
+    result1 = channel1.queue_declare(exclusive=True)
+    queue_name1 = result1.method.queue
+    channel1.queue_bind(exchange='pi_utilization',
+                        queue=queue_name1,
+                       routing_key=host1)
+    channel1.basic_consume(consumeData,
+                      queue=queue_name1,
+                      no_ack=True)
   
   if host2 is not None:
-    # channel declaration 2
+    channel2 = connection.channel()
+    channel2.exchange_declare(exchange='pi_utilization',
+                              type='direct')
+    result2 = channel2.queue_declare(exclusive=True)
+    queue_name2 = result2.method.queue
+    channel2.queue_bind(exchange='pi_utilization',
+                        queue=queue_name2,
+                        routing_key=host2)
+    channel2.basic_consume(consumeData,
+                          queue=queue_name2,
+                          no_ack=True)
 
 
   input()
