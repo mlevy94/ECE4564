@@ -12,22 +12,22 @@ class Client:
     def mongo_insert(self, routing, js):
         pi_id = self.pi.insert_one({"Pi": routing, "info": js}).inserted_id
 
-        cursor = self.pi.find({"Pi": routing})
-        doc = next(self.pi.find({}).sort('info.cpu', pymongo.DESCENDING).limit(1))
-        print(doc['info']['cpu'])
-        doc = next( self.pi.find({}).sort('info.cpu', pymongo.ASCENDING).limit(1))
-        print(doc['info']['cpu'])
+        print("{}:".format(routing))
+        print("cpu: {} [Hi: {}, Lo: {}]".format(
+            js["cpu"],
+            next(self.pi.find({}).sort('info.cpu', pymongo.DESCENDING).limit(1))['info']['cpu'],
+            next(self.pi.find({}).sort('info.cpu', pymongo.ASCENDING).limit(1))['info']['cpu'],
+        ))
 
         for interface, rates in js["net"].items():
-            interString = interface
+            rateStrings = []
             for rate in rates:
-                # grab min, max
-                doc = next(self.pi.find({"Pi": routing}).sort("info.net.{}.{}".format(interface, rate), pymongo.ASCENDING).limit(1))
-                print("{}: {}: min:{}".format(interface, rate, doc["info"]["net"][interface][rate]))
-                doc = next(
-                    self.pi.find({"Pi": routing}).sort("info.net.{}.{}".format(interface, rate), pymongo.DESCENDING).limit(
-                        1))
-                print("{}: {}: max:{}".format(interface, rate, doc["info"]["net"][interface][rate]))
+                rateStrings.append("{}={} B/s [Hi: {} B/s, Lo: {} B/s]".format(rate, js["net"][interface][rate],
+                next(self.pi.find({"Pi": routing}).sort("info.net.{}.{}".format(interface, rate), pymongo.ASCENDING).limit(1))["info"]["net"][interface][rate],
+                next(self.pi.find({"Pi": routing}).sort("info.net.{}.{}".format(interface, rate), pymongo.DESCENDING).limit(1))["info"]["net"][interface][rate],
+                ))
+            print("{}: {}".format(interface, ", ".join(rateStrings)))
+
 
 
 
