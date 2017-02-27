@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse
 import json
 import sys
 import MongoDB
+import pika
 from ledcontroller import LEDController
 
 
@@ -13,7 +14,7 @@ if __name__ == "__main__":
   parser.add_argument("-b", action="store", default="localhost")
   parser.add_argument("-p", action="store", default="/")
   parser.add_argument("-c", action="store", default=None)
-  parser.add_argument("-k", action="store", nargs=2, const=["pi1, pi2"], default=["pi1", "pi2"])
+  parser.add_argument("-k", action="store", nargs=2, default=["pi1", "pi2"])
   fields = parser.parse_args(sys.argv[1:])
   
   led = LEDController()
@@ -75,7 +76,6 @@ if __name__ == "__main__":
                           queue=queue_name2,
                           no_ack=True)
 
-
-  input()
+  input("Press any key to end")
     
   

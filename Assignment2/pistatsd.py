@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse
 import time
 import sys
@@ -88,11 +88,12 @@ if __name__ == "__main__":
   connection = pika.BlockingConnection(parameters)  #need error handling
   channel = connection.channel()
   channel.exchange_declare(exchange='pi_utilization',
-                          type='direct')
-    
+                          type='direct')  
   stats = SysStats()
   while True:
     time.sleep(1) # Keep first to avoid divide by 0 error
+    message = stats.getStats()
+    print(message)
     channel.basic_publish(exchange='pi_utilization',
                       routing_key=fields.k,
-                      body=json.dumps(stats.getStats()))
+                      body=json.dumps(message))
