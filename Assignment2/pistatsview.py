@@ -5,6 +5,7 @@ import sys
 import MongoDB
 import pika
 from ledcontroller import LEDController
+from collections import OrderedDict
 
 
 
@@ -14,7 +15,7 @@ if __name__ == "__main__":
   parser.add_argument("-b", action="store", default="localhost")
   parser.add_argument("-p", action="store", default="/")
   parser.add_argument("-c", action="store", default=None)
-  parser.add_argument("-k", action="store", nargs=2, default=["pi1", "pi2"])
+  parser.add_argument("-k", action="store", required=True)
   fields = parser.parse_args(sys.argv[1:])
   
   led = LEDController()
@@ -32,52 +33,29 @@ if __name__ == "__main__":
     parameters = pika.ConnectionParameters('localhost')
   
   connection = pika.BlockingConnection(parameters)  #need error handling
-  
-  try:
-    host1 = fields.k[0]
-  except IndexError:
-    host1 = None
-    
-  try:
-    host2 = fields.k[1]
-  except IndexError:
-    host2 = None
 
 
   def consumeData(ch, method, properties, body):
-    message = json.loads(body.decode())
+    message = json.loads(body.decode(), object_pairs_hook=OrderedDict)
     mongoClient.mongo_insert(method.routing_key, message)
-    if led.host_select() ^ (method.routing_key == host1):
-      led.queue.put(message["cpu"])
+    # if led.host_select() ^ (method.routing_key == host1):
+    led.queue.put(message["cpu"])
       
-  if host1 is not None:
-    channel1 = connection.channel()
-    channel1.exchange_declare(exchange='pi_utilization',
-                             type='direct')
-    result1 = channel1.queue_declare(exclusive=True)
-    queue_name1 = result1.method.queue
-    channel1.queue_bind(exchange='pi_utilization',
-                        queue=queue_name1,
-                        routing_key=host1)
-    channel1.basic_consume(consumeData,
+  channel1 = connection.channel()
+  channel1.exchange_declare(exchange='pi_utilization',
+                           type='direct')
+  result1 = channel1.queue_declare(exclusive=True)
+  queue_name1 = result1.method.queue
+  channel1.queue_bind(exchange='pi_utilization',
                       queue=queue_name1,
-                      no_ack=True)
+                      routing_key=fields.k)
+  channel1.basic_consume(consumeData,
+                    queue=queue_name1,
+                    no_ack=True)
+  try:
     channel1.start_consuming()
-  
-  if host2 is not None:
-    channel2 = connection.channel()
-    channel2.exchange_declare(exchange='pi_utilization',
-                              type='direct')
-    result2 = channel2.queue_declare(exclusive=True)
-    queue_name2 = result2.method.queue
-    channel2.queue_bind(exchange='pi_utilization',
-                        queue=queue_name2,
-                        routing_key=host2)
-    channel2.basic_consume(consumeData,
-                          queue=queue_name2,
-                          no_ack=True)
-    channel2.start_consuming()
-
-  input("Press any key to end")
-    
-  
+  except KeyboardInterrupt:
+    pass
+  finally:
+    print("Shutting Down")
+    led.cleanup()

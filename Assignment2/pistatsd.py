@@ -4,6 +4,8 @@ import time
 import sys
 import json
 import pika
+from collections import OrderedDict
+
 
 class SysStats:
   
@@ -26,7 +28,7 @@ class SysStats:
     return 1.0 - idle_delta / total_delta
   
   def _getNetStats(self):
-    interfaces = {}
+    interfaces = OrderedDict()
     with open('/proc/net/dev') as f:
       f.readline() # useless. Ignore
       f.readline() # useless. Ignore
@@ -44,7 +46,7 @@ class SysStats:
     last_checkTime = self.checkTime
     self._getNetStats()
     delta_time = self.checkTime - last_checkTime
-    netstats = {}
+    netstats = OrderedDict()
     for interface, value in self.netStats.items():
       last_value = last_netStats[interface]
       netstats[interface] = {
@@ -55,10 +57,10 @@ class SysStats:
   
   
   def getStats(self):
-    return {
-      "net": self.getNetStats(),
-      "cpu": self.getCPU(),
-    }
+    return OrderedDict((
+      ("cpu", self.getCPU()),
+      ("net", self.getNetStats()),
+    ))
     
 
 if __name__ == "__main__":
