@@ -5,21 +5,28 @@ import json
 
 class Client:
 
-    global client
-    global db
-    global pi
+
 
     def create_client(self):
 
-        client = MongoClient('localhost', 27017)
-        db = client.A2_database
-        pi = db.pi_collection
+        self.client = MongoClient('localhost', 27017)
+        self.db = self.client.A2_database
+        self.pi = self.db.pi_collection
 
     def mongo_insert(self, routing, js):
-        pi_id = pi.insert_one({"Pi":routing, "info":js}).inserted_id
+        pi_id = self.pi.insert_one({"Pi":routing, "info":js}).inserted_id
 
-        print(pi.find_one({"Pi": "pi1"})["cpu"])
-        print(pi.find({"Pi": "pi1"}).count())
+
+        print(self.pi.find().sort('Pi.cpu', pymongo.ASCENDING))
+        cursor = self.pi.find({'Pi': routing})
+        
+        # net stats
+        for interface, rates in js["net"].items():
+            interString = interface
+            for rate in rates:
+                # grab min, max
+                interString += blah
+            print(interString)
 
         # if (identity == 'pi1'):
         #
@@ -55,3 +62,7 @@ class Client:
 
 
 if __name__ == "__main__":
+    client = Client()
+    client.create_client()
+    client.mongo_insert('routing','{"net": { "lo": { "rx": 0, "tx": 0 }, "wlan0": { "rx": 708, "tx": 1192 }, "eth0": { "rx": 0, "tx": 0 } }, "cpu": 0.2771314211797171}')
+
