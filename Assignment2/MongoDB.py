@@ -1,11 +1,19 @@
 import pymongo
+import time
 from pymongo import MongoClient
+from pymongo import errors
 
 
 class Client:
     
     def __init__(self):
-        self.client = MongoClient('localhost', 27017)
+        self.client = None
+        while self.client is None:
+            try:
+                self.client = MongoClient('localhost', 27017)
+            except errors.ConnectionFailure:
+                print("Failed to connect to MongoDB. Retrying in 1 second...")
+                time.sleep(1)
         self.db = self.client.A2_database
         self.pi = self.db.pi_collection
 
