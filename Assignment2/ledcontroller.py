@@ -63,6 +63,9 @@ class LEDController:
       self.greenPWM.stop()
       
   def __exit__(self, exc_type, exc_val, exc_tb):
+    self.cleanup()
+
+  def cleanup(self):
     GPIO.cleanup()
       
       

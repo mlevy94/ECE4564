@@ -33,8 +33,6 @@ if __name__ == "__main__":
     parameters = pika.ConnectionParameters('localhost')
   
   connection = pika.BlockingConnection(parameters)  #need error handling
-  
-  host1 =
 
 
   def consumeData(ch, method, properties, body):
@@ -50,9 +48,14 @@ if __name__ == "__main__":
   queue_name1 = result1.method.queue
   channel1.queue_bind(exchange='pi_utilization',
                       queue=queue_name1,
-                      routing_key=fields.k[0])
+                      routing_key=fields.k)
   channel1.basic_consume(consumeData,
                     queue=queue_name1,
                     no_ack=True)
-  channel1.start_consuming()
-  
+  try:
+    channel1.start_consuming()
+  except KeyboardInterrupt:
+    pass
+  finally:
+    print("Shutting Down")
+    led.cleanup()
