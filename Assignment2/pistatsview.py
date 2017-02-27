@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import sys
 import MongoDB
 import pika
 from pika import exceptions
@@ -18,7 +17,7 @@ if __name__ == "__main__":
   parser.add_argument("-p", action="store", default="/")
   parser.add_argument("-c", action="store", default=None)
   parser.add_argument("-k", action="store", required=True)
-  fields = parser.parse_args(sys.argv[1:])
+  fields = parser.parse_args()
   
   led = LEDController()
   mongoClient = MongoDB.Client()
