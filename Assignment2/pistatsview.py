@@ -62,6 +62,7 @@ if __name__ == "__main__":
     channel1.basic_consume(consumeData,
                       queue=queue_name1,
                       no_ack=True)
+    channel1.start_consuming()
   
   if host2 is not None:
     channel2 = connection.channel()
@@ -75,6 +76,7 @@ if __name__ == "__main__":
     channel2.basic_consume(consumeData,
                           queue=queue_name2,
                           no_ack=True)
+    channel2.start_consuming()
 
   input("Press any key to end")
     
