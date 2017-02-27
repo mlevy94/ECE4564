@@ -40,7 +40,7 @@ channel.queue_bind(exchange='pi_utilization',
 
 def callback(ch, method, properties, body):
     message = body
-    print(" [x] Received " message)
+    print(" [x] Received ", message)
 
 channel.basic_consume(callback,
                       queue=queue_name,
