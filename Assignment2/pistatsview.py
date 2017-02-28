@@ -87,7 +87,10 @@ class LEDController:
     GPIO.cleanup()
 
 class Client:
+  # Default constructor for Client. Will create the Client to connect to the
+  # MongoDB server running and create the database to be used
   def __init__(self):
+    # Error checking for never connecting to server
     self.client = None
     while self.client is None:
       try:
@@ -95,12 +98,15 @@ class Client:
       except errors.ConnectionFailure:
         print("Failed to connect to MongoDB. Retrying in 1 second...")
         time.sleep(1)
+    # Setting up the database on the server
     self.db = self.client.A2_database
     self.pi = self.db.pi_collection
-  
+  # Used to insert information into the database. This inserts a different document based on
+  # routing key used and can differentiate between the two different hosts
   def mongo_insert(self, routing, js):
     pi_id = self.pi.insert_one({"Pi": routing, "info": js}).inserted_id
-    
+    # beginning of printing and formating the desired information from the document. begins wth hostname
+    # moves to cpu usage, then moves to the different structures underneath net
     print("\n{}:".format(routing))
     print("cpu: {} [Hi: {}, Lo: {}]".format(
       js["cpu"],
