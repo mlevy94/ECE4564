@@ -30,11 +30,10 @@ def getSkyCover(zipcode, starttime):
   ))
   xmlAnswer = xmltodict.parse(answer.text)
   parameters = xmlAnswer["dwml"]["data"]["parameters"]
-  import pdb; pdb.set_trace()
   return parameters["cloud-amount"]["value"]
   
   
 if __name__ == "__main__":
   import time
   ret = getSkyCover(zip, time.time())
-  print(ret)
+  print(ret, "CLEAR" if int(ret) <= 20 else "NOT CLEAR")
