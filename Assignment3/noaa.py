@@ -1,6 +1,6 @@
 import datetime
-import requests
-import xmltodict
+import requests # Needs to be installed
+import xmltodict # Needs to be installed
 
 call = 'https://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php? \
 whichClient=NDFDgenMultiZipCode&lat=&lon=&listLatLon=&lat1=&lon1=&lat2=&lon2=&resolutionSub=&listLat1=&listLon1=&listLat2=&listLon2=&resolutionList=&endPoint1Lat=&endPoint1Lon=&endPoint2Lat=&endPoint2Lon=&listEndPoint1Lat=&listEndPoint1Lon=&listEndPoint2Lat=&listEndPoint2Lon=& \
