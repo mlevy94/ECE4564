@@ -104,30 +104,37 @@ class Client:
   # Used to insert information into the database. This inserts a different document based on
   # routing key used and can differentiate between the two different hosts
   def mongo_insert(self, routing, js):
-    pi_id = self.pi.insert_one({"Pi": routing, "info": js}).inserted_id
-    # beginning of printing and formating the desired information from the document. begins wth hostname
-    # moves to cpu usage, then moves to the different structures underneath net
-    print("\n{}:".format(routing))
-    print("cpu: {} [Hi: {}, Lo: {}]".format(
-      js["cpu"],
-      next(self.pi.find({}).sort('info.cpu', pymongo.DESCENDING).limit(1))['info']['cpu'],
-      next(self.pi.find({}).sort('info.cpu', pymongo.ASCENDING).limit(1))['info']['cpu'],
-    ))
-    
-    for interface, rates in js["net"].items():
-      rateStrings = []
-      for rate in rates:
-        rateStrings.append("{}={} B/s [Hi: {} B/s, Lo: {} B/s]".format(rate, js["net"][interface][rate],
-                                                                       next(self.pi.find({"Pi": routing}).sort(
-                                                                         "info.net.{}.{}".format(interface, rate),
-                                                                         pymongo.ASCENDING).limit(1))["info"]["net"][
-                                                                         interface][rate],
-                                                                       next(self.pi.find({"Pi": routing}).sort(
-                                                                         "info.net.{}.{}".format(interface, rate),
-                                                                         pymongo.DESCENDING).limit(1))["info"]["net"][
-                                                                         interface][rate],
-                                                                       ))
-      print("{}: {}".format(interface, ", ".join(rateStrings)))
+    try:
+      pi_id = self.pi.insert_one({"Pi": routing, "info": js}).inserted_id
+      # beginning of printing and formating the desired information from the document. begins wth hostname
+      # moves to cpu usage, then moves to the different structures underneath net
+      print("\n{}:".format(routing))
+      print("cpu: {} [Hi: {}, Lo: {}]".format(
+        js["cpu"],
+        next(self.pi.find({}).sort('info.cpu', pymongo.DESCENDING).limit(1))['info']['cpu'],
+        next(self.pi.find({}).sort('info.cpu', pymongo.ASCENDING).limit(1))['info']['cpu'],
+      ))
+      
+      for interface, rates in js["net"].items():
+        rateStrings = []
+        for rate in rates:
+          rateStrings.append("{}={} B/s [Hi: {} B/s, Lo: {} B/s]".format(rate, js["net"][interface][rate],
+                                                                         next(self.pi.find({"Pi": routing}).sort(
+                                                                           "info.net.{}.{}".format(interface, rate),
+                                                                           pymongo.ASCENDING).limit(1))["info"]["net"][
+                                                                           interface][rate],
+                                                                         next(self.pi.find({"Pi": routing}).sort(
+                                                                           "info.net.{}.{}".format(interface, rate),
+                                                                           pymongo.DESCENDING).limit(1))["info"]["net"][
+                                                                           interface][rate],
+                                                                         ))
+        print("{}: {}".format(interface, ", ".join(rateStrings)))
+    except errors.ServerSelectionTimeoutError:
+      print("Failed to upload info to Database. Attempting to reconnect...")
+      try:
+        self.client = MongoClient('localhost', 27017)
+      except errors.ConnectionFailure:
+        print("Failed attempt to reconnect.")
 
 
 if __name__ == "__main__":
