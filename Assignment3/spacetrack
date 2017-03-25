@@ -1,0 +1,11 @@
+import requests
+import datetime
+
+usr = 'Huntw94@vt.edu'
+psw = 'Redmoney424242*'
+baseurl = 'https://www.space-track.org/'
+basicdata = 'basicspacedata/class/tle'
+
+noradid = ''
+fecha = ''
+
