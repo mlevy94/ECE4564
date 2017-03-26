@@ -12,6 +12,7 @@ def blink(seconds):
         print ("LED off")
         GPIO.output(4,GPIO.LOW)
         seconds = seconds - 1;
+        time.sleep(1)
 
 if __name__ == "__main__":
     blink(5)
