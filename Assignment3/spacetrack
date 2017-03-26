@@ -1,11 +1,31 @@
+import json
 import requests
 import datetime
+import sys
+import math
+import ephem
+from requests.auth import HTTPBasicAuth
+from requests.auth import HTTPDigestAuth
 
+nomadid = '25544'
 usr = 'Huntw94@vt.edu'
 psw = 'Redmoney424242*'
-baseurl = 'https://www.space-track.org/'
-basicdata = 'basicspacedata/class/tle'
+query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/TLE_LINE1 ASC/format/tle'.format(nomadid)
 
-noradid = ''
-fecha = ''
+
+payload = {'identity': usr, 'password': psw, 'query' : query}
+
+
+
+
+r = requests.post('https://www.space-track.org/ajaxauth/login', payload)
+
+print(r.status_code)
+
+if(r.status_code == 200):
+    print('status ok')
+    print(r.text)
+
+
+
 
