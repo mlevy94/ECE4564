@@ -9,4 +9,4 @@ def play(songname):
         continue
 
 if __name__ == "__main__":
-    play("odyssey.wav")
+    play("trap.wav")
