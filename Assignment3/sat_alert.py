@@ -40,6 +40,8 @@ def alert(message, window):
     textme(message)
     t1 = Thread(target=blink, args=(window,))
     t2 = Thread(target=play, args=('trap.wav',window,))
+    t1.start()
+    t2.start()
 
 if __name__ == '__main__':
     alert('this is a test', 10)
