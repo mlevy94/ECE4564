@@ -12,10 +12,8 @@ def blink(seconds):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(4,GPIO.OUT)
-        print ("LED on")
         GPIO.output(4,GPIO.HIGH)
         time.sleep(1)
-        print ("LED off")
         GPIO.output(4,GPIO.LOW)
         seconds = seconds - 2;
         time.sleep(1)
@@ -44,4 +42,4 @@ def alert(message, window):
     t2.start()
 
 if __name__ == '__main__':
-    alert('this is a test', 10)
+    alert('this is a test', 30)
