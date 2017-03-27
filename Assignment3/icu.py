@@ -49,8 +49,9 @@ if __name__ == "__main__":
         print(r.text)
 
     myzip = zipcode.isequal(fields.zip)
-    print(str(myzip.lat))
-    print(str(myzip.lon))
+    print("For zipcode: ", fields.zip)
+    print("Latitude: ", str(myzip.lat))
+    print("Longitude: ", str(myzip.lon))
 
     # get visibility data
     #find altitude
@@ -120,7 +121,7 @@ def get_next_pass(lon, lat, alt, tle):
     
     if seenCount != 5:
         print('Do to weather, ' , seenCount, ' sightings were possible in the next 15 days')
-    if seenCount < 0:
+    if seenCount > 0:
 	    for passing in range(seenCount):
 		print("Pass number: ", passing+1)
 		print("Date/time", seenList[passing][0])
