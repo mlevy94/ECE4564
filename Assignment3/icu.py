@@ -71,7 +71,7 @@ def get_next_pass(lon, lat, alt, tle):
     now = datetime.datetime.utcnow()
 
     observer.date = now
-    print(now)
+    #print(now)
     seenCount = 0
     seenList = [None]*5
 
@@ -100,7 +100,7 @@ def get_next_pass(lon, lat, alt, tle):
                 visible = True
             if visible:
                 visibleTime = float(calendar.timegm(rise_time.timetuple()))
-                print(tr, visible)
+                #print(tr, visible)
 
                 seenList[seenCount] = (tr, visible, math.degrees(azr),math.degrees(azs), duration)
                 seenCount += 1
@@ -111,8 +111,18 @@ def get_next_pass(lon, lat, alt, tle):
                 #print(tr, visible)
                 observer.date = ts
     observer.date = observer.date + 1
-    print(seenCount)
-    print(seenList)
+    #print(seenCount)
+    #print(seenList)
+    
+    if seenCount != 5:
+        print('Do to weather, there are only ' , seenCount, ' sightings were possible in the next 15 days')
+    for passing in range(seenCount):
+        print("Pass number: ", seenList[passing][0])
+        print("Date/time", seenList[passing][1])
+        print("Visible: ", seenList[passing][2])
+        print("Rise azimuth: ", seenList[passing][3])
+        print("Set azimuth: ", seenList[passing][4])
+        print("Pass duration: ", seenList[passing][5]/60)
 
     return {
              "rise_time": calendar.timegm(rise_time.timetuple()),
