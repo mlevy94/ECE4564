@@ -10,6 +10,14 @@ import calendar
 import zipcode
 import geocoder
 
+#harcoded tle's
+tle1 = ("0 TECHSAT 1B (GO-32)",
+	"1 25397U 98043D   17083.85494572 -.00000014  00000-0  12820-4 0  9996",
+	"2 25397  98.6023  28.0049 0000466 179.5244 180.5936 14.23617620971570")
+isstle = ("ISS (ZARYA)",
+	"1 25544U 98067A   17085.86699654  .00002420  00000-0  43611-4 0  9991",
+	"2 25544  51.6419  88.6361 0007310 341.9191  96.9999 15.54263976 48954")
+
 
 if __name__ == "__main__":
     # Command Line Arguments
@@ -77,9 +85,12 @@ def get_next_pass(lon, lat, alt, tle):
 
     for day in range(15):
         for veiwing in range(15):
-            tr, azr, tt, altt, ts, azs = observer.next_pass(sat)
-
-
+            sat.compute(observer)
+            if sat.neverup is False and sat.circumpolar is False:
+                tr, azr, tt, altt, ts, azs = observer.next_pass(sat)
+            else:
+                print("This satelite never passes the horizon, try another!")
+                exit(0)
 
             duration = int((ts - tr) *60*60*24)
             rise_time = datetime_from_time(tr)
@@ -124,18 +135,19 @@ def get_next_pass(lon, lat, alt, tle):
         print("Set azimuth: ", seenList[passing][3])
         print("Pass duration: ", seenList[passing][4]/60)
 
-    return {
-             "rise_time": calendar.timegm(rise_time.timetuple()),
-             "rise_azimuth": math.degrees(azr),
-             "max_time": calendar.timegm(max_time.timetuple()),
-             "max_alt": math.degrees(altt),
-             "set_time": calendar.timegm(set_time.timetuple()),
-             "set_azimuth": math.degrees(azs),
-             "elevation": sat.elevation,
-             "sun_alt": sun_alt,
-             "duration": duration,
-             "visible": visible
-           }
+    return seenList
+           #{
+           #  "rise_time": calendar.timegm(rise_time.timetuple()),
+           #  "rise_azimuth": math.degrees(azr),
+           #  "max_time": calendar.timegm(max_time.timetuple()),
+           #  "max_alt": math.degrees(altt),
+           #  "set_time": calendar.timegm(set_time.timetuple()),
+           #  "set_azimuth": math.degrees(azs),
+           #  "elevation": sat.elevation,
+           #  "sun_alt": sun_alt,
+           #  "duration": duration,
+           #  "visible": visible
+           #}
 
 res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
 
