@@ -14,14 +14,20 @@ if __name__ == "__main__":
 # get satellite
 usr = 'Huntw94@vt.edu'
 psw = 'Redmoney424242*'
+
 query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
     fields.satellite)
+
 query2 = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/tle'.format(
     fields.satellite)
+
 payload = {'identity': usr, 'password': psw, 'query': query}
+
 payload2 = {'identity': usr, 'password': psw, 'query': query2}
+
 r = requests.post('https://www.space-track.org/ajaxauth/login', payload)
 q = requests.post('https://www.space-track.org/ajaxauth/login', payload2)
+
 if (q.status_code != 200):
     print("an error has occured. Error {}".format(r.status_code))
 else:

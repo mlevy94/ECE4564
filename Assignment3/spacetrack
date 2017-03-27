@@ -16,8 +16,8 @@ r = requests.post('https://www.space-track.org/ajaxauth/login', payload)
 if(r.status_code != 200):
     print("an error has occured. Error {}".format(r.status_code))
 else:
-    print(r.text)
-
+    print(r.text.splitlines()[0])
+    print(r.encoding)
 
 
 
