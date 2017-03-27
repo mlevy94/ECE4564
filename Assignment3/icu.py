@@ -77,9 +77,8 @@ def get_next_pass(lon, lat, alt, tle):
     observer.horizon = '-0:34'
 
     now = datetime.datetime.utcnow()
-
     observer.date = now
-    #print(now)
+
     seenCount = 0
     seenList = [None]*5
 
@@ -110,23 +109,17 @@ def get_next_pass(lon, lat, alt, tle):
             if sat.eclipsed is False and -18 < math.degrees(sun_alt) < -6 :
                 visible = True
             if visible:
-                visibleTime = float(calendar.timegm(rise_time.timetuple()))
-                #print(tr, visible)
-
                 seenList[seenCount] = (tr, visible, math.degrees(azr),math.degrees(azs), duration)
                 seenCount += 1
                 if seenCount == 5:
                     break
                 observer.date = ts
             else:
-                #print(tr, visible)
                 observer.date = ts
     observer.date = observer.date + 1
-    #print(seenCount)
-    #print(seenList)
     
     if seenCount != 5:
-        print('Do to weather, there are  ' , seenCount, ' sightings were possible in the next 15 days')
+        print('Do to weather, ' , seenCount, ' sightings were possible in the next 15 days')
     if seenCount < 0:
 	    for passing in range(seenCount):
 		print("Pass number: ", passing+1)
@@ -137,18 +130,7 @@ def get_next_pass(lon, lat, alt, tle):
 		print("Pass duration: ", seenList[passing][4]/60)
 
     return seenList
-           #{
-           #  "rise_time": calendar.timegm(rise_time.timetuple()),
-           #  "rise_azimuth": math.degrees(azr),
-           #  "max_time": calendar.timegm(max_time.timetuple()),
-           #  "max_alt": math.degrees(altt),
-           #  "set_time": calendar.timegm(set_time.timetuple()),
-           #  "set_azimuth": math.degrees(azs),
-           #  "elevation": sat.elevation,
-           #  "sun_alt": sun_alt,
-           #  "duration": duration,
-           #  "visible": visible
-           #}
+
 
 res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
 
