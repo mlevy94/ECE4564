@@ -46,7 +46,7 @@ if __name__ == "__main__":
     if (r.status_code != 200):
         print("an error has occured. Error {}".format(r.status_code))
     else:
-        print(r.text)
+        print("Satelite TLE information: ",r.text)
 
     myzip = zipcode.isequal(fields.zip)
     print("For zipcode: ", fields.zip)
@@ -124,7 +124,7 @@ def get_next_pass(lon, lat, alt, tle):
     if seenCount > 0:
 	    for passing in range(seenCount):
 		print("Pass number: ", passing+1)
-		print("Date/time", seenList[passing][0])
+		print("Date/time: ", seenList[passing][0])
 		print("Visible: ", seenList[passing][1])
 		print("Rise azimuth: ", seenList[passing][2])
 		print("Set azimuth: ", seenList[passing][3])
