@@ -20,11 +20,11 @@ def blink(seconds):
 
 
 def play(songname, window):
-    start = datetime.time()
+    start = time.time()
     pygame.mixer.init()
     pygame.mixer.music.load(songname)
     pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy() and datetime.time() - start < window:
+    while pygame.mixer.music.get_busy() and time.time() - start < window:
         continue
 
 

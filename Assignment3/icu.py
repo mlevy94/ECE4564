@@ -69,7 +69,7 @@ def datetime_from_time(tr):
 
 
 def get_next_pass(lon, lat, alt, tle):
-    sat = ephem.readtle(tle.splitlines()[0], tle.splitlines()[1], tle.splitlines()[2])
+    sat = ephem.readtle(tle.text.splitlines()[0], tle.text.splitlines()[1], tle.text.splitlines()[2])
 
     observer = ephem.Observer()
     observer.lat = str(lat)
@@ -218,7 +218,7 @@ if __name__ == "__main__":
     # get visibility data
     # find altitude
     alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
-    
+
 
     count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
     for c in range(count):
