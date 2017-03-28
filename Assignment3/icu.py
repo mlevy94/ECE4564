@@ -11,6 +11,40 @@ import zipcode
 import geocoder
 
 
+#================openweather=====================
+import datetime
+import requests # needs to be installed
+import json
+
+
+fiveDay = "http://api.openweathermap.org/data/2.5/forecast?zip={zip},us&APPID={key}"
+sixteenDay = "http://api.openweathermap.org/data/2.5/forecast/daily?zip={zip},us&cnt=16&APPID={key}"
+
+zip = 24060
+
+apiKey = "231ea1f95f5b7e73a482ffcdc9772060"
+
+def getWeather(zipcode, startTime):
+  if isinstance(startTime, float):
+    startTime = datetime.datetime.utcfromtimestamp(startTime)
+  request = sixteenDay.format(zip=zipcode, key=apiKey)
+  answer = requests.get(request)
+  if not answer.ok:
+    raise ConnectionError("Bad API Response: code {}, request: {}".format(answer.status_code, request))
+  forcastList = json.loads(answer.text)["list"]
+  targetDay = None
+  for day in forcastList:
+    forcastDate = datetime.datetime.fromtimestamp(day["dt"])
+    if forcastDate.date() == startTime.date():
+      targetDay = day
+      break
+  try:
+    return targetDay["clouds"]
+  except TypeError:
+    return 100
+#================openweather end=====================
+
+
 if __name__ == "__main__":
     # Command Line Arguments
     parser = argparse.ArgumentParser()
@@ -96,7 +130,8 @@ def get_next_pass(lon, lat, alt, tle):
 
             #checks for visibiliy and checks if the weather is clear
             visible = False
-            if sat.eclipsed is False and -18 < math.degrees(sun_alt) < -6 :
+            if sat.eclipsed is False and -18 < math.degrees(sun_alt) < -6 \
+                    and getWeather(str(fields.zip),ephem.localtime(tr)) < 20:
                 visible = True
             if visible:
                 visibleTime = float(calendar.timegm(rise_time.timetuple()))
@@ -115,7 +150,7 @@ def get_next_pass(lon, lat, alt, tle):
     #print(seenList)
     
     if seenCount != 5:
-        print('Do to weather, there are only ' , seenCount, ' sightings were possible in the next 15 days')
+        print('Do to weather, there are only' , seenCount, 'sightings possible in the next 15 days')
     for passing in range(seenCount):
         print("Pass number: ", passing+1)
         print("Date/time", seenList[passing][0])
@@ -124,23 +159,22 @@ def get_next_pass(lon, lat, alt, tle):
         print("Set azimuth: ", seenList[passing][3])
         print("Pass duration: ", seenList[passing][4]/60)
 
-    return {
-             "rise_time": calendar.timegm(rise_time.timetuple()),
-             "rise_azimuth": math.degrees(azr),
-             "max_time": calendar.timegm(max_time.timetuple()),
-             "max_alt": math.degrees(altt),
-             "set_time": calendar.timegm(set_time.timetuple()),
-             "set_azimuth": math.degrees(azs),
-             "elevation": sat.elevation,
-             "sun_alt": sun_alt,
-             "duration": duration,
-             "visible": visible
-           }
+    return seenCount, seenList #{
+    #          "rise_time": calendar.timegm(rise_time.timetuple()),
+    #          "rise_azimuth": math.degrees(azr),
+    #          "max_time": calendar.timegm(max_time.timetuple()),
+    #          "max_alt": math.degrees(altt),
+    #          "set_time": calendar.timegm(set_time.timetuple()),
+    #          "set_azimuth": math.degrees(azs),
+    #          "elevation": sat.elevation,
+    #          "sun_alt": sun_alt,
+    #          "duration": duration,
+    #          "visible": visible
+    #
+    #        }
 
-res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
+count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
 
-
-
-
-
+for c in range(count):
+    print(res[c])
 # set alarms
