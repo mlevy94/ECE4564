@@ -26,9 +26,9 @@ isstle = ("ISS (ZARYA)",
 eventData = dedent("""\
     Date/time: {}
     Visible: {}
-    Rise azimuth: {}
-    Set azimuth: {}
-    Pass duration: {}\
+    Rise azimuth: {:.4f}
+    Set azimuth: {:.4f}
+    Pass duration: {:.2f}\
     """)
 
 #================alerts==========================
@@ -142,13 +142,13 @@ def get_next_pass(lon, lat, alt, tle):
         print(dedent("""\
         Pass number: {}
         {}
-        """.format(passing + 1, eventData).format(
+        """).format(passing + 1, eventData).format(
             seenList[passing][0],
             seenList[passing][1],
             seenList[passing][2],
             seenList[passing][3],
             seenList[passing][4] / 60)
-        ))
+        )
 
     return seenCount, seenList  # {
     #          "rise_time": calendar.timegm(rise_time.timetuple()),
