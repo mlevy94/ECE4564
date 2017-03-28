@@ -12,6 +12,7 @@ import time
 from twilio.rest import TwilioRestClient
 from threading import Thread
 import RPi.GPIO as GPIO
+from textwrap import dedent
 
 # harcoded tle's
 
@@ -22,13 +23,13 @@ isstle = ("ISS (ZARYA)",
           "1 25544U 98067A   17085.86699654  .00002420  00000-0  43611-4 0  9991",
           "2 25544  51.6419  88.6361 0007310 341.9191  96.9999 15.54263976 48954")
 
-eventData = """\
+eventData = dedent("""\
     Date/time: {}
     Visible: {}
     Rise azimuth: {}
     Set azimuth: {}
     Pass duration: {}
-    """
+    """)
 
 #================alerts==========================
 def blink(seconds):
@@ -138,16 +139,15 @@ def get_next_pass(lon, lat, alt, tle):
     if seenCount != 5:
         print('Do to weather, ', seenCount, ' sightings possible in the next 15 days')
     for passing in range(seenCount):
-        print("""
-        Pass number: {}
-        {}\n
+        print(dedent("""Pass number: {}
+        {}
         """.format(passing + 1, eventData).format(
             seenList[passing][0],
             seenList[passing][1],
             seenList[passing][2],
             seenList[passing][3],
             seenList[passing][4] / 60)
-        )
+        ))
 
     return seenCount, seenList  # {
     #          "rise_time": calendar.timegm(rise_time.timetuple()),
@@ -212,7 +212,8 @@ def getSatelite():
     if (thrleresp.status_code != 200):
         print("an error has occured. Error {}".format(thrleresp.status_code))
     else:
-        print("Satelite TLE information: \n", thrleresp.text.splitlines()[1])
+        print("Satelite TLE information:")
+        print(thrleresp.text.splitlines()[1])
         print(thrleresp.text.splitlines()[2])
     return thrleresp
 #  ===================end ====================
