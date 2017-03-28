@@ -7,6 +7,7 @@ import zipcode
 import geocoder
 import json
 import pygame
+import sched
 from twilio.rest import TwilioRestClient
 from threading import Thread
 import RPi.GPIO as GPIO
@@ -56,76 +57,7 @@ def alert(message, window):
     t1.start()
     t2.start()
 #================end alert=================================
-
-#================openweather=====================
-fiveDay = "http://api.openweathermap.org/data/2.5/forecast?zip={zip},us&APPID={key}"
-
-sixteenDay = "http://api.openweathermap.org/data/2.5/forecast/daily?zip={zip},us&cnt=16&APPID={key}"
-
-apiKey = "231ea1f95f5b7e73a482ffcdc9772060"
-
-
-def getWeather(zipcode, startTime):
-    if isinstance(startTime, float):
-        startTime = datetime.datetime.utcfromtimestamp(startTime)
-    request = sixteenDay.format(zip=zipcode, key=apiKey)
-    answer = requests.get(request)
-    if not answer.ok:
-        raise ConnectionError("Bad API Response: code {}, request: {}".format(answer.status_code, request))
-    forcastList = json.loads(answer.text)["list"]
-    targetDay = None
-    for day in forcastList:
-        forcastDate = datetime.datetime.fromtimestamp(day["dt"])
-        if forcastDate.date() == startTime.date():
-            targetDay = day
-            break
-    try:
-        return targetDay["clouds"]
-    except TypeError:
-        return 100
-
-if __name__ == "__main__":
-    # Command Line Arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-z", "--zip", action="store", default="24060")
-    parser.add_argument("-s", "--satellite", action="store", default="25397")
-    fields = parser.parse_args()
-
-
-    # get satellite
-    #credentials used for space-track
-    usr = 'Huntw94@vt.edu'
-    psw = 'Redmoney424242*'
-    #query for 3le information
-    query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
-        fields.satellite)
-
-    #payload info for 3le
-    payload = {'identity': usr, 'password': psw, 'query': query}
-
-    #request response
-    thrleresp = requests.post('https://www.space-track.org/ajaxauth/login', payload)
-
-    #error checking for failed response
-    if (thrleresp.status_code != 200):
-        print("an error has occured. Error {}".format(thrleresp.status_code))
-    else:
-        print("Satelite TLE information: ", thrleresp.text.splitlines()[1])
-        print(thrleresp.text.splitlines()[2])
-
-
-    myzip = zipcode.isequal(fields.zip)
-    print("For zipcode: ", fields.zip)
-    print("Latitude: ", str(myzip.lat))
-    print("Longitude: ", str(myzip.lon))
-
-    # ======================PyEphem===========================================
-    # get visibility data
-    # find altitude
-    alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
-    tle = thrleresp.text
-
-
+#================PyEphem Functions=========================
 def seconds_between(d1, d2):
     return abs((d2 - d1).seconds)
 
@@ -137,7 +69,7 @@ def datetime_from_time(tr):
 
 
 def get_next_pass(lon, lat, alt, tle):
-    sat = ephem.readtle(tle.splitlines()[0], tle.splitlines()[1], tle.splitlines()[2])
+    sat = ephem.readtle(tle.text.splitlines()[0], tle.text.splitlines()[1], tle.text.splitlines()[2])
 
     observer = ephem.Observer()
     observer.lat = str(lat)
@@ -214,20 +146,94 @@ def get_next_pass(lon, lat, alt, tle):
     #
     #        }
 
-count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
-for c in range(count):
-    value = ephem.localtime(res[c][0])
-    alerttime[c] = value
-# set alarms
+#====================End PyEphem Functions============================
 
-timedel = datetime.timedelta(minutes=15)
-i = 0
-while(1):
-    if(datetime.time() == alerttime[i] - timedel):
-        mess = "Date/time" + str(res[i][0])
-        + "\nVisible: " + str(res[i][1])
-        + "\nRise azimuth: " + str(res[i][2])
-        + "\nSet azimuth: " + str(res[i][3])
-        + "\nPass duration: " + str(res[i][4]/60)
-        alert(mess, 900)
-        i+=1
+#================openweather=====================
+fiveDay = "http://api.openweathermap.org/data/2.5/forecast?zip={zip},us&APPID={key}"
+
+sixteenDay = "http://api.openweathermap.org/data/2.5/forecast/daily?zip={zip},us&cnt=16&APPID={key}"
+
+apiKey = "231ea1f95f5b7e73a482ffcdc9772060"
+
+
+def getWeather(zipcode, startTime):
+    if isinstance(startTime, float):
+        startTime = datetime.datetime.utcfromtimestamp(startTime)
+    request = sixteenDay.format(zip=zipcode, key=apiKey)
+    answer = requests.get(request)
+    if not answer.ok:
+        raise ConnectionError("Bad API Response: code {}, request: {}".format(answer.status_code, request))
+    forcastList = json.loads(answer.text)["list"]
+    targetDay = None
+    for day in forcastList:
+        forcastDate = datetime.datetime.fromtimestamp(day["dt"])
+        if forcastDate.date() == startTime.date():
+            targetDay = day
+            break
+    try:
+        return targetDay["clouds"]
+    except TypeError:
+        return 100
+#============= Satelite Function===========
+def getSatelite():
+    # get satellite
+    # credentials used for space-track
+    usr = 'Huntw94@vt.edu'
+    psw = 'Redmoney424242*'
+    # query for 3le information
+    query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
+        fields.satellite)
+
+    # payload info for 3le
+    payload = {'identity': usr, 'password': psw, 'query': query}
+
+    # request response
+    thrleresp = requests.post('https://www.space-track.org/ajaxauth/login', payload)
+
+    # error checking for failed response
+    if (thrleresp.status_code != 200):
+        print("an error has occured. Error {}".format(thrleresp.status_code))
+    else:
+        print("Satelite TLE information: \n", thrleresp.text.splitlines()[1])
+        print(thrleresp.text.splitlines()[2])
+    return thrleresp
+#  ===================end ====================
+
+if __name__ == "__main__":
+    # Command Line Arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-z", "--zip", action="store", default="24060")
+    parser.add_argument("-s", "--satellite", action="store", default="25397")
+    fields = parser.parse_args()
+
+    # get satellite
+    tle = getSatelite()
+
+    myzip = zipcode.isequal(fields.zip)
+    print("For zipcode: ", fields.zip)
+    print("Latitude: ", str(myzip.lat))
+    print("Longitude: ", str(myzip.lon))
+
+    # ======================PyEphem===========================================
+    # get visibility data
+    # find altitude
+    alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
+
+    alerttime = []
+    count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
+    for c in range(count):
+        value = ephem.localtime(res[c][0])
+        alerttime.append(value)
+    # set alarms
+
+    timedel = datetime.timedelta(minutes=15)
+    i = 0
+    while(1):
+        if(datetime.datetime.now() <= alerttime[i] - timedel):
+            mess = "Date/time" + str(res[i][0])
+            + "\nVisible: " + str(res[i][1])
+            + "\nRise azimuth: " + str(res[i][2])
+            + "\nSet azimuth: " + str(res[i][3])
+            + "\nPass duration: " + str(res[i][4]/60)
+            alert(mess, 900)
+            i+=1
