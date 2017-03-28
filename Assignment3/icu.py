@@ -28,7 +28,7 @@ eventData = dedent("""\
     Visible: {}
     Rise azimuth: {}
     Set azimuth: {}
-    Pass duration: {}
+    Pass duration: {}\
     """)
 
 #================alerts==========================
@@ -41,7 +41,7 @@ def blink(seconds):
             GPIO.output(4,GPIO.HIGH)
             time.sleep(1)
             GPIO.output(4,GPIO.LOW)
-            seconds = seconds - 2;
+            seconds = seconds - 2
             time.sleep(1)
     finally:
         GPIO.cleanup()
@@ -139,7 +139,8 @@ def get_next_pass(lon, lat, alt, tle):
     if seenCount != 5:
         print('Do to weather, ', seenCount, ' sightings possible in the next 15 days')
     for passing in range(seenCount):
-        print(dedent("""Pass number: {}
+        print(dedent("""\
+        Pass number: {}
         {}
         """.format(passing + 1, eventData).format(
             seenList[passing][0],
