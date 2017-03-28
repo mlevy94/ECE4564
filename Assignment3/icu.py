@@ -86,7 +86,8 @@ if __name__ == "__main__":
     print("For zipcode: ", fields.zip)
     print("Latitude: ", str(myzip.lat))
     print("Longitude: ", str(myzip.lon))
-
+     
+    #======================PyEphem===========================================
     # get visibility data
     #find altitude
     alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
@@ -123,7 +124,7 @@ def get_next_pass(lon, lat, alt, tle):
             if sat.neverup is False and sat.circumpolar is False:
                 tr, azr, tt, altt, ts, azs = observer.next_pass(sat)
             else:
-                print("The satelite ",r.text.splitlines()[0]," never passes the horizon, try another one!")
+                print("The satelite ",tle.splitlines()[0]," never passes the horizon, try another one!")
                 exit(0)
 
             duration = int((ts - tr) *60*60*24)
@@ -155,14 +156,15 @@ def get_next_pass(lon, lat, alt, tle):
     observer.date = observer.date + 1
     
     if seenCount != 5:
-        print('Do to weather, there are only' , seenCount, 'sightings possible in the next 15 days')
-    for passing in range(seenCount):
-        print("Pass number: ", passing+1)
-        print("Date/time", seenList[passing][0])
-        print("Visible: ", seenList[passing][1])
-        print("Rise azimuth: ", seenList[passing][2])
-        print("Set azimuth: ", seenList[passing][3])
-        print("Pass duration: ", seenList[passing][4]/60)
+        print('Do to weather, ' , seenCount, ' sightings possible in the next 15 days')
+    if seenCount >0:
+        for passing in range(seenCount):
+            print("Pass number: ", passing + 1)
+            print("Date/time", seenList[passing][0])
+            print("Visible: ", seenList[passing][1])
+            print("Rise azimuth: ", seenList[passing][2])
+            print("Set azimuth: ", seenList[passing][3])
+            print("Pass duration: ", seenList[passing][4] / 60)
 
     return seenCount, seenList #{
     #          "rise_time": calendar.timegm(rise_time.timetuple()),
@@ -178,7 +180,8 @@ def get_next_pass(lon, lat, alt, tle):
     #
     #        }
 
-count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
+count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle) # get PyEphem data
+#==========================End PyEphem==================================
 
 for c in range(count):
     print(res[c])
