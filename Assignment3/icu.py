@@ -223,7 +223,7 @@ if __name__ == "__main__":
     count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
     for c in range(count):
         value = ephem.localtime(res[c][0])
-        alerttime[c] = value
+        alerttime.append(value)
     # set alarms
 
     timedel = datetime.timedelta(minutes=15)
