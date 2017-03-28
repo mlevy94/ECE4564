@@ -229,7 +229,7 @@ if __name__ == "__main__":
     timedel = datetime.timedelta(minutes=15)
     i = 0
     while(1):
-        if(datetime.time() == alerttime[i] - timedel):
+        if(datetime.datetime.now() <= alerttime[i] - timedel):
             mess = "Date/time" + str(res[i][0])
             + "\nVisible: " + str(res[i][1])
             + "\nRise azimuth: " + str(res[i][2])
