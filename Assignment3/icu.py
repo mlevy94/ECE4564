@@ -22,6 +22,13 @@ isstle = ("ISS (ZARYA)",
           "1 25544U 98067A   17085.86699654  .00002420  00000-0  43611-4 0  9991",
           "2 25544  51.6419  88.6361 0007310 341.9191  96.9999 15.54263976 48954")
 
+eventData = """\
+    Date/time: {}
+    Visible: {}
+    Rise azimuth: {}
+    Set azimuth: {}
+    Pass duration: {}
+    """
 
 #================alerts==========================
 def blink(seconds):
@@ -53,13 +60,7 @@ def textme(message):
                            body= "Satellite alert: " + message)
 
 def sendAlert(event, window):
-    textme("""\
-    Date/time: {}
-    Visible: {}
-    Rise azimuth: {}
-    Set azimuth: {}
-    Pass duration: {}
-    """.format(event[0], event[1], event[2], event[3], event[4]/60))
+    textme(eventData.format(event[0], event[1], event[2], event[3], event[4]/60))
     t1 = Thread(target=blink, args=(window,))
     t2 = Thread(target=play, args=('trap.wav',window,))
     t1.start()
@@ -100,7 +101,7 @@ def get_next_pass(lon, lat, alt, tle):
             if sat.neverup is False and sat.circumpolar is False:
                 tr, azr, tt, altt, ts, azs = observer.next_pass(sat)
             else:
-                print("The satelite ", tle.splitlines()[0], " never passes the horizon, try another one!")
+                print("The satellite ", tle.text.splitlines()[0], " never passes the horizon, try another one!")
                 exit(0)
 
             duration = int((ts - tr) * 60 * 60 * 24)
@@ -133,14 +134,17 @@ def get_next_pass(lon, lat, alt, tle):
 
     if seenCount != 5:
         print('Do to weather, ', seenCount, ' sightings possible in the next 15 days')
-    if seenCount > 0:
-        for passing in range(seenCount):
-            print("Pass number: ", passing + 1)
-            print("Date/time", seenList[passing][0])
-            print("Visible: ", seenList[passing][1])
-            print("Rise azimuth: ", seenList[passing][2])
-            print("Set azimuth: ", seenList[passing][3])
-            print("Pass duration: ", seenList[passing][4] / 60)
+    for passing in range(seenCount):
+        print("""
+        Pass number: {}
+        {}\n
+        """.format(passing + 1, eventData).format(
+            seenList[passing][0],
+            seenList[passing][1],
+            seenList[passing][2],
+            seenList[passing][3],
+            seenList[passing][4] / 60)
+        )
 
     return seenCount, seenList  # {
     #          "rise_time": calendar.timegm(rise_time.timetuple()),
