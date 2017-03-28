@@ -8,6 +8,7 @@ import geocoder
 import json
 import pygame
 import sched
+import time
 from twilio.rest import TwilioRestClient
 from threading import Thread
 import RPi.GPIO as GPIO
@@ -50,12 +51,20 @@ def textme(message):
     client.messages.create(to="+18604717675", from_="+19592008885",
                            body= "Satellite alert: " + message)
 
-def alert(message, window):
-    textme(message)
+def alert(event, window):
+    textme("""\
+    Date/time: {}
+    Visible: {}
+    Rise azimuth: {}
+    Set azimuth: {}
+    Pass duration: {}
+    """.format(event[0], event[1], event[2], event[3], event[4]/60))
     t1 = Thread(target=blink, args=(window,))
     t2 = Thread(target=play, args=('trap.wav',window,))
     t1.start()
     t2.start()
+    t1.join()
+    t2.join()
 #================end alert=================================
 #================PyEphem Functions=========================
 def seconds_between(d1, d2):
@@ -174,6 +183,7 @@ def getWeather(zipcode, startTime):
         return targetDay["clouds"]
     except TypeError:
         return 100
+    
 #============= Satelite Function===========
 def getSatelite():
     # get satellite
@@ -198,6 +208,15 @@ def getSatelite():
         print(thrleresp.text.splitlines()[2])
     return thrleresp
 #  ===================end ====================
+
+def scheduleAlerts(alerts, res):
+    s = sched.scheduler()
+    for alert, result in zip(alerts, res):
+        aTime = time.time() - alert.timestamp()
+        aTime = aTime if aTime > 0 else 0
+        alertDuration = 900 if aTime > 900 else aTime
+        s.enter(aTime, 1, alert, argument=[result, alertDuration])
+    s.run()
 
 if __name__ == "__main__":
     # Command Line Arguments
@@ -228,12 +247,9 @@ if __name__ == "__main__":
 
     timedel = datetime.timedelta(minutes=15)
     i = 0
-    while(1):
-        if(datetime.datetime.now() <= alerttime[i] - timedel):
-            mess = "Date/time" + str(res[i][0])
-            + "\nVisible: " + str(res[i][1])
-            + "\nRise azimuth: " + str(res[i][2])
-            + "\nSet azimuth: " + str(res[i][3])
-            + "\nPass duration: " + str(res[i][4]/60)
-            alert(mess, 900)
-            i+=1
+    
+    scheduleAlerts(alerttime, res)
+        
+
+
+
