@@ -32,15 +32,18 @@ eventData = """\
 
 #================alerts==========================
 def blink(seconds):
-    while(seconds > 0):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup(4,GPIO.OUT)
-        GPIO.output(4,GPIO.HIGH)
-        time.sleep(1)
-        GPIO.output(4,GPIO.LOW)
-        seconds = seconds - 2;
-        time.sleep(1)
+    try:
+        while(seconds > 0):
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setwarnings(False)
+            GPIO.setup(4,GPIO.OUT)
+            GPIO.output(4,GPIO.HIGH)
+            time.sleep(1)
+            GPIO.output(4,GPIO.LOW)
+            seconds = seconds - 2;
+            time.sleep(1)
+    finally:
+        GPIO.cleanup()
 
 
 def play(songname, window):
