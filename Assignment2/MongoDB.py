@@ -10,7 +10,7 @@ class Client:
         self.client = None
         while self.client is None:
             try:
-                self.client = MongoClient('localhost', 27017)
+                self.client = MongoClient('netapps.ece.vt.edu', 27017)
             except errors.ConnectionFailure:
                 print("Failed to connect to MongoDB. Retrying in 1 second...")
                 time.sleep(1)

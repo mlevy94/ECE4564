@@ -27,7 +27,7 @@ def getWeather(zipcode, startTime):
   try:
     return targetDay["clouds"]
   except TypeError:
-    return None
+    return 100
   
   
 if __name__ == "__main__":
