@@ -174,6 +174,30 @@ def getWeather(zipcode, startTime):
         return targetDay["clouds"]
     except TypeError:
         return 100
+#============= Satelite Function===========
+def getSatelite():
+    # get satellite
+    # credentials used for space-track
+    usr = 'Huntw94@vt.edu'
+    psw = 'Redmoney424242*'
+    # query for 3le information
+    query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
+        fields.satellite)
+
+    # payload info for 3le
+    payload = {'identity': usr, 'password': psw, 'query': query}
+
+    # request response
+    thrleresp = requests.post('https://www.space-track.org/ajaxauth/login', payload)
+
+    # error checking for failed response
+    if (thrleresp.status_code != 200):
+        print("an error has occured. Error {}".format(thrleresp.status_code))
+    else:
+        print("Satelite TLE information: ", thrleresp.text.splitlines()[1])
+        print(thrleresp.text.splitlines()[2])
+    return 0
+#  ===================end ====================
 
 if __name__ == "__main__":
     # Command Line Arguments
@@ -183,26 +207,7 @@ if __name__ == "__main__":
     fields = parser.parse_args()
 
     # get satellite
-    #credentials used for space-track
-    usr = 'Huntw94@vt.edu'
-    psw = 'Redmoney424242*'
-    #query for 3le information
-    query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
-        fields.satellite)
-
-    #payload info for 3le
-    payload = {'identity': usr, 'password': psw, 'query': query}
-
-    #request response
-    thrleresp = requests.post('https://www.space-track.org/ajaxauth/login', payload)
-
-    #error checking for failed response
-    if (thrleresp.status_code != 200):
-        print("an error has occured. Error {}".format(thrleresp.status_code))
-    else:
-        print("Satelite TLE information: ", thrleresp.text.splitlines()[1])
-        print(thrleresp.text.splitlines()[2])
-
+    getSatelite()
 
     myzip = zipcode.isequal(fields.zip)
     print("For zipcode: ", fields.zip)
