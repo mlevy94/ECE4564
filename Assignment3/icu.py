@@ -9,6 +9,7 @@ import math
 import calendar
 import zipcode
 import geocoder
+import json
 
 #harcoded tle's
 tle1 = ("0 TECHSAT 1B (GO-32)",
@@ -18,17 +19,7 @@ isstle = ("ISS (ZARYA)",
 	"1 25544U 98067A   17085.86699654  .00002420  00000-0  43611-4 0  9991",
 	"2 25544  51.6419  88.6361 0007310 341.9191  96.9999 15.54263976 48954")
 
-
-#================openweather=====================
-import datetime
-import requests # needs to be installed
-import json
-
-
-fiveDay = "http://api.openweathermap.org/data/2.5/forecast?zip={zip},us&APPID={key}"
 sixteenDay = "http://api.openweathermap.org/data/2.5/forecast/daily?zip={zip},us&cnt=16&APPID={key}"
-
-zip = 24060
 
 apiKey = "231ea1f95f5b7e73a482ffcdc9772060"
 
@@ -50,47 +41,6 @@ def getWeather(zipcode, startTime):
     return targetDay["clouds"]
   except TypeError:
     return 100
-#================openweather end=====================
-
-
-if __name__ == "__main__":
-    # Command Line Arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-z", "--zip", action="store", default="24060")
-    parser.add_argument("-s", "--satellite", action="store", default="25397")
-    fields = parser.parse_args()
-
-    # get satellite
-    usr = 'Huntw94@vt.edu'
-    psw = 'Redmoney424242*'
-
-    query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
-        fields.satellite)
-
-    query2 = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/tle'.format(
-        fields.satellite)
-
-    payload = {'identity': usr, 'password': psw, 'query': query}
-
-    payload2 = {'identity': usr, 'password': psw, 'query': query2}
-
-    r = requests.post('https://www.space-track.org/ajaxauth/login', payload)
-    q = requests.post('https://www.space-track.org/ajaxauth/login', payload2)
-
-    if (r.status_code != 200):
-        print("an error has occured. Error {}".format(r.status_code))
-    else:
-        print("Satelite TLE information: ",r.text)
-
-    myzip = zipcode.isequal(fields.zip)
-    print("For zipcode: ", fields.zip)
-    print("Latitude: ", str(myzip.lat))
-    print("Longitude: ", str(myzip.lon))
-
-    # get visibility data
-    #find altitude
-    alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
-    tle = r.text
 
 def seconds_between(d1, d2):
     return abs((d2 - d1).seconds)
@@ -184,4 +134,41 @@ for c in range(count):
     print(res[c])
 
 
-# set alarms
+if __name__ == "__main__":
+    # Command Line Arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-z", "--zip", action="store", default="24060")
+    parser.add_argument("-s", "--satellite", action="store", default="25397")
+    fields = parser.parse_args()
+
+    # get satellite
+    usr = 'Huntw94@vt.edu'
+    psw = 'Redmoney424242*'
+
+    query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
+        fields.satellite)
+
+    query2 = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/tle'.format(
+        fields.satellite)
+
+    payload = {'identity': usr, 'password': psw, 'query': query}
+
+    payload2 = {'identity': usr, 'password': psw, 'query': query2}
+
+    r = requests.post('https://www.space-track.org/ajaxauth/login', payload)
+    q = requests.post('https://www.space-track.org/ajaxauth/login', payload2)
+
+    if (r.status_code != 200):
+        print("an error has occured. Error {}".format(r.status_code))
+    else:
+        print("Satelite TLE information: ", r.text)
+
+    myzip = zipcode.isequal(fields.zip)
+    print("For zipcode: ", fields.zip)
+    print("Latitude: ", str(myzip.lat))
+    print("Longitude: ", str(myzip.lon))
+
+    # get visibility data
+    #find altitude
+    alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
+    tle = r.text
