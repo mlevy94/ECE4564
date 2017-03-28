@@ -61,12 +61,12 @@ def textme(message):
     client = TwilioRestClient("AC53dbff6bf8a76f141fb50a6d37d96223",
                               "7b04a0394a3ca7022d7d34a655b43a8f")
     client.messages.create(to="+18604717675", from_="+19592008885",
-                           body= "Satellite alert: " + message)
+                           body="Satellite alert:\n" + message)
 
 def sendAlert(event, window):
     textme(eventData.format(event[0], event[1], event[2], event[3], event[4]/60))
     t1 = Thread(target=blink, args=(window,))
-    t2 = Thread(target=play, args=('trap.wav',window,))
+    t2 = Thread(target=play, args=('trap.wav', window,))
     t1.start()
     t2.start()
     t1.join()
