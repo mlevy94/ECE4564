@@ -37,3 +37,4 @@ if __name__ == "__main__":
   import time
   ret = getSkyCover(zip, time.time())
   print(ret, "CLEAR" if int(ret) <= 20 else "NOT CLEAR")
+
