@@ -27,27 +27,34 @@ if __name__ == "__main__":
     fields = parser.parse_args()
 
     # get satellite
+    # credentials used for space-track
     usr = 'Huntw94@vt.edu'
     psw = 'Redmoney424242*'
 
+    #query used to determine the 3le information
     query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
         fields.satellite)
 
+    #query used to determine the tle information
     query2 = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/tle'.format(
         fields.satellite)
 
+    #payload infomation for 3le information
     payload = {'identity': usr, 'password': psw, 'query': query}
-
+    #payload information for tle information
     payload2 = {'identity': usr, 'password': psw, 'query': query2}
 
-    r = requests.post('https://www.space-track.org/ajaxauth/login', payload)
-    q = requests.post('https://www.space-track.org/ajaxauth/login', payload2)
-
-    if (r.status_code != 200):
-        print("an error has occured. Error {}".format(r.status_code))
+    #requests for informaion from space-track
+    thrleresp = requests.post('https://www.space-track.org/ajaxauth/login', payload)
+    tleresp = requests.post('https://www.space-track.org/ajaxauth/login', payload2)
+    #error checking for requests
+    if (thrleresp.status_code != 200):
+        print("an error has occured. Error {}".format(tleresp.status_code))
     else:
-        print("Satelite TLE information: ",r.text)
+        print("Satelite TLE information: ",tleresp.text)
 
+
+    #printing out and finding latitude and longitude for current zip code
     myzip = zipcode.isequal(fields.zip)
     print("For zipcode: ", fields.zip)
     print("Latitude: ", str(myzip.lat))
@@ -56,7 +63,7 @@ if __name__ == "__main__":
     # get visibility data
     #find altitude
     alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
-    tle = q.text
+    tle = thrleresp.text
 
 def seconds_between(d1, d2):
     return abs((d2 - d1).seconds)
@@ -68,7 +75,7 @@ def datetime_from_time(tr):
 
 def get_next_pass(lon, lat, alt, tle):
 
-    sat = ephem.readtle(r.text.splitlines()[0], r.text.splitlines()[1], r.text.splitlines()[2])
+    sat = ephem.readtle(thrleresp.text.splitlines()[0], thrleresp.text.splitlines()[1], thrleresp.text.splitlines()[2])
 
     observer = ephem.Observer()
     observer.lat = str(lat)
@@ -89,7 +96,7 @@ def get_next_pass(lon, lat, alt, tle):
             if sat.neverup is False and sat.circumpolar is False:
                 tr, azr, tt, altt, ts, azs = observer.next_pass(sat)
             else:
-                print("The satelite ",r.text.splitlines()[0]," never passes the horizon, try another one!")
+                print("The satelite ",thrleresp.text.splitlines()[0]," never passes the horizon, try another one!")
                 exit(0)
 
             duration = int((ts - tr) *60*60*24)
