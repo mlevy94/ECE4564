@@ -1,12 +1,8 @@
 import argparse
 import requests
-import zipcode
-import datetime
-import xmltodict
 import ephem
 import datetime
 import math
-import calendar
 import zipcode
 import geocoder
 import json
@@ -42,6 +38,46 @@ def getWeather(zipcode, startTime):
   except TypeError:
     return 100
 
+if __name__ == "__main__":
+    # Command Line Arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-z", "--zip", action="store", default="24060")
+    parser.add_argument("-s", "--satellite", action="store", default="25397")
+    fields = parser.parse_args()
+
+    # get satellite
+    usr = 'Huntw94@vt.edu'
+    psw = 'Redmoney424242*'
+
+    query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
+        fields.satellite)
+
+    query2 = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/tle'.format(
+        fields.satellite)
+
+    payload = {'identity': usr, 'password': psw, 'query': query}
+
+    payload2 = {'identity': usr, 'password': psw, 'query': query2}
+
+    r = requests.post('https://www.space-track.org/ajaxauth/login', payload)
+    q = requests.post('https://www.space-track.org/ajaxauth/login', payload2)
+
+    if (r.status_code != 200):
+        print("an error has occured. Error {}".format(r.status_code))
+    else:
+        print("Satelite TLE information: ",r.text)
+
+    myzip = zipcode.isequal(fields.zip)
+    print("For zipcode: ", fields.zip)
+    print("Latitude: ", str(myzip.lat))
+    print("Longitude: ", str(myzip.lon))
+     
+    #======================PyEphem===========================================
+    # get visibility data
+    #find altitude
+    alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
+    tle = r.text
+
 def seconds_between(d1, d2):
     return abs((d2 - d1).seconds)
 
@@ -73,7 +109,7 @@ def get_next_pass(lon, lat, alt, tle):
             if sat.neverup is False and sat.circumpolar is False:
                 tr, azr, tt, altt, ts, azs = observer.next_pass(sat)
             else:
-                print("The satelite ",r.text.splitlines()[0]," never passes the horizon, try another one!")
+                print("The satelite ",tle.splitlines()[0]," never passes the horizon, try another one!")
                 exit(0)
 
             duration = int((ts - tr) *60*60*24)
@@ -105,14 +141,15 @@ def get_next_pass(lon, lat, alt, tle):
     observer.date = observer.date + 1
     
     if seenCount != 5:
-        print('Do to weather, there are only' , seenCount, 'sightings possible in the next 15 days')
-    for passing in range(seenCount):
-        print("Pass number: ", passing+1)
-        print("Date/time", seenList[passing][0])
-        print("Visible: ", seenList[passing][1])
-        print("Rise azimuth: ", seenList[passing][2])
-        print("Set azimuth: ", seenList[passing][3])
-        print("Pass duration: ", seenList[passing][4]/60)
+        print('Do to weather, ' , seenCount, ' sightings possible in the next 15 days')
+    if seenCount >0:
+        for passing in range(seenCount):
+            print("Pass number: ", passing + 1)
+            print("Date/time", seenList[passing][0])
+            print("Visible: ", seenList[passing][1])
+            print("Rise azimuth: ", seenList[passing][2])
+            print("Set azimuth: ", seenList[passing][3])
+            print("Pass duration: ", seenList[passing][4] / 60)
 
     return seenCount, seenList #{
     #          "rise_time": calendar.timegm(rise_time.timetuple()),
@@ -128,47 +165,9 @@ def get_next_pass(lon, lat, alt, tle):
     #
     #        }
 
-count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
+count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle) # get PyEphem data
+#==========================End PyEphem==================================
 
 for c in range(count):
     print(res[c])
 
-
-if __name__ == "__main__":
-    # Command Line Arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-z", "--zip", action="store", default="24060")
-    parser.add_argument("-s", "--satellite", action="store", default="25397")
-    fields = parser.parse_args()
-
-    # get satellite
-    usr = 'Huntw94@vt.edu'
-    psw = 'Redmoney424242*'
-
-    query = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/3le'.format(
-        fields.satellite)
-
-    query2 = 'https://www.space-track.org/basicspacedata/query/class/tle_latest/ORDINAL/1/NORAD_CAT_ID/{}/orderby/NORAD_CAT_ID ASC/format/tle'.format(
-        fields.satellite)
-
-    payload = {'identity': usr, 'password': psw, 'query': query}
-
-    payload2 = {'identity': usr, 'password': psw, 'query': query2}
-
-    r = requests.post('https://www.space-track.org/ajaxauth/login', payload)
-    q = requests.post('https://www.space-track.org/ajaxauth/login', payload2)
-
-    if (r.status_code != 200):
-        print("an error has occured. Error {}".format(r.status_code))
-    else:
-        print("Satelite TLE information: ", r.text)
-
-    myzip = zipcode.isequal(fields.zip)
-    print("For zipcode: ", fields.zip)
-    print("Latitude: ", str(myzip.lat))
-    print("Longitude: ", str(myzip.lon))
-
-    # get visibility data
-    #find altitude
-    alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
-    tle = r.text
