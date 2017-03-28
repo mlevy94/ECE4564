@@ -46,7 +46,7 @@ def blink(seconds):
     finally:
         GPIO.cleanup()
 
-
+# Play song
 def play(songname, window):
     start = time.time()
     pygame.mixer.init()
@@ -56,13 +56,14 @@ def play(songname, window):
             pygame.mixer.music.play()
         time.sleep(1)
 
-
+# send text message
 def textme(message):
     client = TwilioRestClient("AC53dbff6bf8a76f141fb50a6d37d96223",
                               "7b04a0394a3ca7022d7d34a655b43a8f")
     client.messages.create(to="+18604717675", from_="+19592008885",
                            body="Satellite alert:\n" + message)
 
+# send all alerts
 def sendAlert(event, window):
     textme(eventData.format(event[0], event[1], event[2], event[3], event[4]/60))
     t1 = Thread(target=blink, args=(window,))
@@ -76,16 +77,17 @@ def sendAlert(event, window):
 def seconds_between(d1, d2):
     return abs((d2 - d1).seconds)
 
-
+#===============Convert ephem time to UTC==================
 def datetime_from_time(tr):
     year, month, day, hour, minute, second = tr.tuple()
     dt = datetime.datetime(year, month, day, hour, minute, int(second))
     return dt
 
-
+#==============Find all viewable passes====================
 def get_next_pass(lon, lat, alt, tle):
     sat = ephem.readtle(tle.text.splitlines()[0], tle.text.splitlines()[1], tle.text.splitlines()[2])
 
+#Set observer location
     observer = ephem.Observer()
     observer.lat = str(lat)
     observer.long = str(lon)
@@ -150,20 +152,7 @@ def get_next_pass(lon, lat, alt, tle):
             seenList[passing][4] / 60)
         )
 
-    return seenCount, seenList  # {
-    #          "rise_time": calendar.timegm(rise_time.timetuple()),
-    #          "rise_azimuth": math.degrees(azr),
-    #          "max_time": calendar.timegm(max_time.timetuple()),
-    #          "max_alt": math.degrees(altt),
-    #          "set_time": calendar.timegm(set_time.timetuple()),
-    #          "set_azimuth": math.degrees(azs),
-    #          "elevation": sat.elevation,
-    #          "sun_alt": sun_alt,
-    #          "duration": duration,
-    #          "visible": visible
-    #
-    #        }
-
+    return seenCount, seenList
 #====================End PyEphem Functions============================
 
 #================openweather=====================
