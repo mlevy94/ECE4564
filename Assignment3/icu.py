@@ -51,7 +51,7 @@ def textme(message):
     client.messages.create(to="+18604717675", from_="+19592008885",
                            body= "Satellite alert: " + message)
 
-def alert(event, window):
+def sendAlert(event, window):
     textme("""\
     Date/time: {}
     Visible: {}
@@ -215,7 +215,7 @@ def scheduleAlerts(alerts, res):
         aTime = time.time() - alert.timestamp()
         aTime = aTime if aTime > 0 else 0
         alertDuration = 900 if aTime > 900 else aTime
-        s.enter(aTime, 1, alert, argument=[result, alertDuration])
+        s.enter(aTime, 1, sendAlert, argument=[result, alertDuration])
     s.run()
 
 if __name__ == "__main__":
