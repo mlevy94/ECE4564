@@ -219,14 +219,13 @@ if __name__ == "__main__":
     # find altitude
     alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
 
-
+    alerttime = []
     count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
     for c in range(count):
         value = ephem.localtime(res[c][0])
         alerttime[c] = value
     # set alarms
 
-    alerttime = []
     timedel = datetime.timedelta(minutes=15)
     i = 0
     while(1):
