@@ -194,7 +194,7 @@ def getSatelite():
     if (thrleresp.status_code != 200):
         print("an error has occured. Error {}".format(thrleresp.status_code))
     else:
-        print("Satelite TLE information: ", thrleresp.text.splitlines()[1])
+        print("Satelite TLE information: \n", thrleresp.text.splitlines()[1])
         print(thrleresp.text.splitlines()[2])
     return thrleresp
 #  ===================end ====================
