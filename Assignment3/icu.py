@@ -91,6 +91,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--satellite", action="store", default="25397")
     fields = parser.parse_args()
 
+
     # get satellite
     #credentials used for space-track
     usr = 'Huntw94@vt.edu'
