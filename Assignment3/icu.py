@@ -196,7 +196,7 @@ def getSatelite():
     else:
         print("Satelite TLE information: ", thrleresp.text.splitlines()[1])
         print(thrleresp.text.splitlines()[2])
-    return 0
+    return thrleresp
 #  ===================end ====================
 
 if __name__ == "__main__":
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     fields = parser.parse_args()
 
     # get satellite
-    getSatelite()
+    tle = getSatelite()
 
     myzip = zipcode.isequal(fields.zip)
     print("For zipcode: ", fields.zip)
@@ -218,8 +218,7 @@ if __name__ == "__main__":
     # get visibility data
     # find altitude
     alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
-    tle = thrleresp.text
-
+    
 
     count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
     for c in range(count):
