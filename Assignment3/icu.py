@@ -137,7 +137,7 @@ def get_next_pass(lon, lat, alt, tle):
     observer.date = observer.date + 1
 
     if seenCount != 5:
-        print('Do to weather, ', seenCount, ' sightings possible in the next 15 days')
+        print('Due to weather, ', seenCount, ' sightings possible in the next 15 days')
     for passing in range(seenCount):
         print(dedent("""\
         Pass number: {}
