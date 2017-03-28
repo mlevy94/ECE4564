@@ -7,6 +7,7 @@ import zipcode
 import geocoder
 import json
 import pygame
+import sched
 from twilio.rest import TwilioRestClient
 from threading import Thread
 import RPi.GPIO as GPIO
@@ -212,7 +213,7 @@ def get_next_pass(lon, lat, alt, tle):
     #          "visible": visible
     #
     #        }
-
+alerttime = []
 count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
 for c in range(count):
     value = ephem.localtime(res[c][0])
