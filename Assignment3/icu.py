@@ -90,7 +90,7 @@ if __name__ == "__main__":
     # get visibility data
     #find altitude
     alt = geocoder.google([myzip.lat, myzip.lon], method='elevation')
-    tle = q.text
+    tle = r.text
 
 def seconds_between(d1, d2):
     return abs((d2 - d1).seconds)
@@ -102,7 +102,7 @@ def datetime_from_time(tr):
 
 def get_next_pass(lon, lat, alt, tle):
 
-    sat = ephem.readtle(r.text.splitlines()[0], r.text.splitlines()[1], r.text.splitlines()[2])
+    sat = ephem.readtle(tle.splitlines()[0], tle.splitlines()[1], tle.splitlines()[2])
 
     observer = ephem.Observer()
     observer.lat = str(lat)
