@@ -1,19 +1,12 @@
 import argparse
-import zipcode
-import datetime
-import xmltodict
+import requests
 import ephem
 import datetime
 import math
-import calendar
 import zipcode
 import geocoder
-
-import requests # needs to be installed
 import json
 import pygame
-import twilio
-import twilio.rest
 from twilio.rest import TwilioRestClient
 from threading import Thread
 import RPi.GPIO as GPIO
@@ -66,9 +59,8 @@ def alert(message, window):
 
 #================openweather=====================
 fiveDay = "http://api.openweathermap.org/data/2.5/forecast?zip={zip},us&APPID={key}"
-sixteenDay = "http://api.openweathermap.org/data/2.5/forecast/daily?zip={zip},us&cnt=16&APPID={key}"
 
-zip = 24060
+sixteenDay = "http://api.openweathermap.org/data/2.5/forecast/daily?zip={zip},us&cnt=16&APPID={key}"
 
 apiKey = "231ea1f95f5b7e73a482ffcdc9772060"
 
@@ -91,10 +83,6 @@ def getWeather(zipcode, startTime):
         return targetDay["clouds"]
     except TypeError:
         return 100
-
-
-# ================openweather end=====================
-
 
 if __name__ == "__main__":
     # Command Line Arguments
