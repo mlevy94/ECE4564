@@ -72,10 +72,10 @@ if __name__ == "__main__":
     #payload info for 3le
     payload = {'identity': usr, 'password': psw, 'query': query}
 
-
+    #request response
     thrleresp = requests.post('https://www.space-track.org/ajaxauth/login', payload)
 
-
+    #error checking for failed response
     if (thrleresp.status_code != 200):
         print("an error has occured. Error {}".format(thrleresp.status_code))
     else:
