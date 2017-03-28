@@ -1,5 +1,4 @@
 import argparse
-import requests
 import zipcode
 import datetime
 import xmltodict
@@ -9,7 +8,14 @@ import math
 import calendar
 import zipcode
 import geocoder
-
+import requests # needs to be installed
+import json
+import pygame
+import twilio
+import twilio.rest
+from twilio.rest import TwilioRestClient
+from threading import Thread
+import RPi.GPIO as GPIO
 #harcoded tle's
 tle1 = ("0 TECHSAT 1B (GO-32)",
 	"1 25397U 98043D   17083.85494572 -.00000014  00000-0  12820-4 0  9996",
@@ -19,12 +25,43 @@ isstle = ("ISS (ZARYA)",
 	"2 25544  51.6419  88.6361 0007310 341.9191  96.9999 15.54263976 48954")
 
 
+#================alerts==========================
+def blink(seconds):
+    while(seconds > 0):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(4,GPIO.OUT)
+        GPIO.output(4,GPIO.HIGH)
+        time.sleep(1)
+        GPIO.output(4,GPIO.LOW)
+        seconds = seconds - 2;
+        time.sleep(1)
+
+
+def play(songname, window):
+    start = datetime.time()
+    pygame.mixer.init()
+    pygame.mixer.music.load(songname)
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() and datetime.time() - start < window:
+        continue
+
+
+def textme(message):
+    client = TwilioRestClient("AC53dbff6bf8a76f141fb50a6d37d96223",
+                              "7b04a0394a3ca7022d7d34a655b43a8f")
+    client.messages.create(to="+18604717675", from_="+19592008885",
+                           body= "Satellite alert: " + message)
+
+def alert(message, window):
+    textme(message)
+    t1 = Thread(target=blink, args=(window,))
+    t2 = Thread(target=play, args=('trap.wav',window,))
+    t1.start()
+    t2.start()
+#================end alert=================================
+
 #================openweather=====================
-import datetime
-import requests # needs to be installed
-import json
-
-
 fiveDay = "http://api.openweathermap.org/data/2.5/forecast?zip={zip},us&APPID={key}"
 sixteenDay = "http://api.openweathermap.org/data/2.5/forecast/daily?zip={zip},us&cnt=16&APPID={key}"
 
@@ -179,9 +216,19 @@ def get_next_pass(lon, lat, alt, tle):
     #        }
 
 count, res = get_next_pass(myzip.lat, myzip.lon, alt.meters, tle)
-
 for c in range(count):
-    print(res[c])
-
-
+    value = ephem.localtime(res[c][0])
+    alerttime[c] = value
 # set alarms
+
+timedel = datetime.timedelta(minutes=15)
+i = 0
+while(1):
+    if(datetime.time() == value[i] - timedel):
+        mess = "Date/time" + str(res[i][0])
+        + "\nVisible: " + str(res[i][1])
+        + "\nRise azimuth: " + str(res[i][2])
+        + "\nSet azimuth: " + str(res[i][3])
+        + "\nPass duration: " + str(res[i][4]/60)
+        alert(mess, 900)
+        i+=1

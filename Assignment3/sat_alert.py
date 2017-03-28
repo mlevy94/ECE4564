@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import time
+import datetime
 import pygame
 import twilio
 import twilio.rest
@@ -20,11 +20,11 @@ def blink(seconds):
 
 
 def play(songname, window):
-    start = time.time()
+    start = datetime.time()
     pygame.mixer.init()
     pygame.mixer.music.load(songname)
     pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy() and time.time() - start < window:
+    while pygame.mixer.music.get_busy() and datetime.time() - start < window:
         continue
 
 
