@@ -37,12 +37,13 @@ def blink(seconds):
 
 
 def play(songname, window):
-    start = datetime.time()
+    start = time.time()
     pygame.mixer.init()
     pygame.mixer.music.load(songname)
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy() and datetime.time() - start < window:
-        continue
+    while time.time() - start <= window:
+        if not pygame.mixer.music.get_busy():
+            pygame.mixer.music.play()
+        time.sleep(1)
 
 
 def textme(message):
