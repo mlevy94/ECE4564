@@ -53,6 +53,7 @@ def textme(message):
                            body= "Satellite alert: " + message)
 
 def sendAlert(event, window):
+    print("Event Starting...")
     textme("""\
     Date/time: {}
     Visible: {}
@@ -213,10 +214,11 @@ def getSatelite():
 def scheduleAlerts(alerts, res):
     s = sched.scheduler()
     for alert, result in zip(alerts, res):
-        aTime = time.time() - alert.timestamp()
+        aTime = alert.timestamp() - time.time() - 900 
         aTime = aTime if aTime > 0 else 0
         alertDuration = 900 if aTime > 900 else aTime
         s.enter(aTime, 1, sendAlert, argument=[result, alertDuration])
+        print("Event happening in {} seconds".format(aTime))
     s.run()
 
 if __name__ == "__main__":
