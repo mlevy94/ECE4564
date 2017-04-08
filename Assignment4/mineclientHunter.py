@@ -7,6 +7,7 @@ from aiocoap import *
 logging.basicConfig(level=logging.INFO)
 
 async def mine_get():
+
     protocol = await Context.create_client_context()
 
     request = Message(code=aiocoap.Get, uri='coap://localhost/Main/Minecraft')
@@ -20,6 +21,7 @@ async def mine_get():
         print('Result: %s\n%r'%(response.code, response.payload))
 
 async def mine_put():
+
     context = await Context.create_client_context()
 
     await asyncio.sleep(2)
@@ -34,8 +36,9 @@ async def mine_put():
     print('Result: %s\n%r' % (response.code, response.payload))
 
 async def main():
-    mine_get()
-    mine_put()
+    
+    await mine_get()
+    await mine_put()
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
