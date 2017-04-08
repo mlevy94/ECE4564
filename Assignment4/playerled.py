@@ -35,8 +35,10 @@ class playerLed:
         self.numplayers = 0
 
     def color(self):
-
-        col = self.gettoken()
+        try:
+            col = self.gettoken()
+        except ZeroDivisionError:
+            col = 0
 
         if col == -1:
             GPIO.output(4, GPIO.HIGH)
