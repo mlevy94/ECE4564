@@ -28,8 +28,8 @@ class MinecraftResource(resource.Resource):
 
 
 
-    logging.basicConfig(level=logging.INFO)
-    logging.getLogger("coap-server").setLevel(logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("coap-server").setLevel(logging.DEBUG)
 
 
 def main():
