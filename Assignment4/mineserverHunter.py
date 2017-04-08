@@ -9,7 +9,6 @@ class MinecraftResource(resource.Resource):
 
     def __init__(self):
         super(MinecraftResource, self).__init__()
-#        self.add_param(resource.LinkParam("title", "Large resource."))
 
     async def render_get(self, request):
         await asyncio.sleep(3)
@@ -22,9 +21,11 @@ class MinecraftResource(resource.Resource):
 
         print('POST payload: %s' % request.payload)
         self.content = request.payload
+
         payload = ("I've accepted the new payload. You may inspect it here in " \
                  "Python's repr format:\n\n%r" % self.content).encode('utf8')
         return aiocoap.Message(payload=payload)
+
 
 
     logging.basicConfig(level=logging.INFO)
@@ -40,5 +41,5 @@ def main():
     asyncio.get_event_loop().run_forever()
 
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
