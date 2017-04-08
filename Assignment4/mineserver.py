@@ -2,6 +2,7 @@ from mcpi.minecraft import Minecraft
 
 
 class MinePlayer:
+
   def __init__(self):
     self.mc = Minecraft.create()
     self.mc.postToChat("I'm Alive!!!")
@@ -15,6 +16,7 @@ class MinePlayer:
     # Set position and block
     self.mc.player.setPos(x, y, z)
     self.mc.setBlock(x + 1, y, z, block)
+
 
 
 class Game:
@@ -39,20 +41,13 @@ class Game:
     
   def addPlayer(self):
     return self.tokenizer.addplayer()
-    
-  
-
-
-
 
 
 if __name__ == "__main__":
-  # set up broadcast server
-  # wait for 3 players to connect
-  print("Waiting for 3 players to connect...")
-  
-  input("All players have connected. Press any key to begin.")
+    # set up broadcast server
+    # wait for 3 players to connect
+    print("Waiting for 3 players to connect...")
 
-  # start accepting movement commands
-  
-  
+    input("All players have connected. Press any key to begin.")
+
+    # start accepting movement commands
