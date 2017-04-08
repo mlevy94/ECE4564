@@ -13,9 +13,9 @@ class MinecraftResource(resource.Resource):
     async def render_get(self, request):
         await asyncio.sleep(3)
 
-        payload = "current location in minecraft:"  # needs to be filled out
+        self.content = "current location in minecraft:"  # needs to be filled out
 
-        return aiocoap.Message(payload=payload)
+        return aiocoap.Message(payload=self.content)
 
     async def render_put(self, request):
 
