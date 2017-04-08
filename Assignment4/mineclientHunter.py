@@ -33,7 +33,7 @@ async def mine_put():
 
     response = await context.request(request).response
 
-    print('Result: %s\n%r' % (response.code, response.payload))
+    print('Result: {0}\n{1}'.format(response.code, response.payload))
 
 async def main():
 
