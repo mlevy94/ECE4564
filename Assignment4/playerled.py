@@ -6,7 +6,7 @@ class playerLed:
 
     def gettoken(self):
         if self.turn == -1:
-            return 0
+            return -1
         return (self.turn % self.numplayers) + 1
 
     def incrementturn(self):
