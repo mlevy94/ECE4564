@@ -4,17 +4,19 @@ import time
 
 class playerLed:
 
-    token = 0
-    numPlayers = 0
-
     def gettoken(self):
-        return token
+        return self.token
 
     def incrementtoken(self):
-        token += 1
+        self.token += 1
+        return self.token
 
     def addplayer(self):
-        numPlayers += 1
+        self.numplayers += 1
+        return self.numplayers
+
+    def getplayer(self):
+        return self.numplayers
 
     def __del__(self):
         GPIO.cleanup()
@@ -25,9 +27,11 @@ class playerLed:
         GPIO.setup(4, GPIO.OUT)
         GPIO.setup(17, GPIO.OUT)
         GPIO.setup(27, GPIO.OUT)
+        self.token = 0
+        self.numplayers = 0
 
     def color(self):
-        col = token % 3
+        col = self.token % 3
 
         if col == 1:
             GPIO.output(17,GPIO.LOW)
