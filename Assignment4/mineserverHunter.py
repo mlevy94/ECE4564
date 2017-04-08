@@ -19,12 +19,12 @@ class MinecraftResource(resource.Resource):
 
     async def render_put(self, request):
 
-        print('POST payload: %s' % request.payload)
+        print('POST payload:{0}'.format(request.payload))
         self.content = request.payload
 
-        payload = ('I\'ve accepted the new payload. You may inspect it here in ' \
+        pl = ('I\'ve accepted the new payload. You may inspect it here in ' \
                    'Python\'s repr format:\n\n{0})'.format({self.content}))
-        return aiocoap.Message(payload=payload)
+        return aiocoap.Message(payload=pl)
 
 
 
