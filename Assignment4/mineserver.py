@@ -1,4 +1,9 @@
 from mcpi.minecraft import Minecraft
+import RPi.GPIO as GPIO
+import pickle
+import asyncio
+import aiocoap.resource as resource
+import aiocoap
 
 
 class MinePlayer:
@@ -42,12 +47,98 @@ class Game:
   def addPlayer(self):
     return self.tokenizer.addplayer()
 
+class MinecraftResource(resource.Resource):
+  def __init__(self, game, *args, **kargs):
+    super().__init__(*args, **kargs)
+    self.game = game
+
+  async def render_get(self, request):
+    await asyncio.sleep(3)
+    if request.payload == b'Assign':
+      playerToken = (self.game.addPlayer(),)
+      return aiocoap.Message(payload=pickle.dumps(playerToken))
+    else:
+      gameState = self.game.getState()
+      return aiocoap.Message(payload=pickle.dumps(gameState))
+
+  async def render_put(self, request):
+    blockPlace = pickle.loads(request.payload)
+    self.game.putBlock(*blockPlace)
+    return aiocoap.Message()
+
+class playerLed:
+
+  def gettoken(self):
+    if self.turn == -1:
+      return -1
+    else:
+      return (self.turn % self.numplayers) + 1
+
+  def incrementturn(self):
+    self.turn += 1
+    self.color()
+
+  def getturn(self):
+    return self.turn
+
+  def addplayer(self):
+    self.numplayers += 1
+    return self.numplayers
+
+  def getplayer(self):
+    return self.numplayers
+
+  def __del__(self):
+    GPIO.cleanup()
+
+  def __init__(self):
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(4, GPIO.OUT)
+    GPIO.setup(17, GPIO.OUT)
+    GPIO.setup(27, GPIO.OUT)
+    self.turn = 0
+    self.numplayers = 0
+
+  def color(self):
+    try:
+      col = self.gettoken()
+    except ZeroDivisionError:
+      col = 0
+  
+    if col == -1:
+      GPIO.output(4, GPIO.HIGH)
+      GPIO.output(17, GPIO.HIGH)
+      GPIO.output(27, GPIO.HIGH)
+  
+    elif col == 1:
+      GPIO.output(17, GPIO.LOW)
+      GPIO.output(27, GPIO.LOW)
+      GPIO.output(4, GPIO.HIGH)
+  
+    elif col == 2:
+      GPIO.output(4, GPIO.LOW)
+      GPIO.output(27, GPIO.LOW)
+      GPIO.output(17, GPIO.HIGH)
+  
+    elif col == 3:
+      GPIO.output(4, GPIO.LOW)
+      GPIO.output(17, GPIO.LOW)
+      GPIO.output(27, GPIO.HIGH)
+  
+    else:
+      GPIO.output(4, GPIO.LOW)
+      GPIO.output(17, GPIO.LOW)
+      GPIO.output(27, GPIO.LOW)
 
 if __name__ == "__main__":
     # set up broadcast server
     # wait for 3 players to connect
     print("Waiting for 3 players to connect...")
+    tokenizer = playerLed()
+    game = Game(tokenizer)
+    root = resource.Site()
+    root.add_resource(('Main', 'Minecraft'), MinecraftResource(game))
 
-    input("All players have connected. Press any key to begin.")
-
-    # start accepting movement commands
+    asyncio.Task(aiocoap.Context.create_server_context(root))
+    asyncio.get_event_loop().run_forever()

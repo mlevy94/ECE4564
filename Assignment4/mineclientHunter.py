@@ -1,8 +1,7 @@
 import logging
 import asyncio
-import aiocoap
 
-from aiocoap import *
+from aiocoap import Context, Message, PUT, GET
 
 logging.basicConfig(level=logging.INFO)
 
