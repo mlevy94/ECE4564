@@ -11,6 +11,7 @@ class playerLed:
 
     def incrementturn(self):
         self.turn += 1
+        self.color()
 
     def getturn(self):
         return self.turn
