@@ -2,41 +2,47 @@ import RPi.GPIO as GPIO
 import time
 
 
-def color(player):
+class playerLed:
 
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-    GPIO.setup(4,GPIO.OUT)
-    GPIO.setup(17,GPIO.OUT)
-    GPIO.setup(27,GPIO.OUT)
+    token = 0
+    numPlayers = 0
 
-    col = player % 5
+    def gettoken(self):
+        return token
 
-    if col == 1:
-        GPIO.output(17,GPIO.LOW)
-        GPIO.output(27,GPIO.LOW)
-        GPIO.output(4,GPIO.HIGH)
+    def incrementtoken(self):
+        token += 1
 
-    elif col == 2:
-        GPIO.output(4,GPIO.LOW)
-        GPIO.output(27,GPIO.LOW)
-        GPIO.output(17,GPIO.HIGH)
+    def addplayer(self):
+        numPlayers += 1
 
-    elif col == 3:
-        GPIO.output(4,GPIO.LOW)
-        GPIO.output(17,GPIO.LOW)
-        GPIO.output(27,GPIO.HIGH)
+    def __del__(self):
+        GPIO.cleanup()
 
-    elif col == 4:
-        GPIO.output(4, GPIO.LOW)
-        GPIO.output(17, GPIO.LOW)
-        GPIO.output(27, GPIO.LOW)
+    def __init__(self):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(4, GPIO.OUT)
+        GPIO.setup(17, GPIO.OUT)
+        GPIO.setup(27, GPIO.OUT)
 
-    else:
-        GPIO.output(4, GPIO.HIGH)
-        GPIO.output(17, GPIO.HIGH)
-        GPIO.output(27, GPIO.HIGH)
+    def color(self):
+        col = token % 3
 
+        if col == 1:
+            GPIO.output(17,GPIO.LOW)
+            GPIO.output(27,GPIO.LOW)
+            GPIO.output(4,GPIO.HIGH)
+
+        elif col == 2:
+            GPIO.output(4,GPIO.LOW)
+            GPIO.output(27,GPIO.LOW)
+            GPIO.output(17,GPIO.HIGH)
+
+        else:
+            GPIO.output(4, GPIO.LOW)
+            GPIO.output(17, GPIO.LOW)
+            GPIO.output(27, GPIO.HIGH)
 
 
 if __name__ == "__main__":
