@@ -38,7 +38,7 @@ async def mine_put():
 async def main():
 
     await mine_get()
-    await mine_put()
+    #await mine_put()
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
