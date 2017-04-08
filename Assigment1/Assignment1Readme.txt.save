@@ -1,0 +1,27 @@
+Dependencies:
+wolframalpha
+
+Must install with:
+sudo pip3 install wolframalph
+
+Run:
+python3 server.py
+
+Usage:
+Run the server and record the IP of the device and port this program runs on. U$
+
+This is the readme for client.py
+
+Call:
+python3 client.py
+
+Dependencies:
+tweepy
+
+Must install first using:
+sudo pip3 install tweepy
+
+Usage:
+if any tweets are sent to this account with the format "@4564Team_13 ##Address:$
+
+
