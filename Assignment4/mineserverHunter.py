@@ -22,8 +22,8 @@ class MinecraftResource(resource.Resource):
         print('POST payload: %s' % request.payload)
         self.content = request.payload
 
-        payload = ("I've accepted the new payload. You may inspect it here in " \
-                 "Python's repr format:\n\n%r" % self.content).encode('utf8')
+        payload = ('I\'ve accepted the new payload. You may inspect it here in ' \
+                   'Python\'s repr format:\n\n{0})'.format({self.content}))
         return aiocoap.Message(payload=payload)
 
 
