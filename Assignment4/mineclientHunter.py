@@ -26,14 +26,14 @@ async def mine_put():
 
     await asyncio.sleep(2)
 
-    payload = b"update minecraft with put\n"
+    payload = "update minecraft with put"
     request = Message(code=PUT, payload=payload)
     request.opt.uri_host = 'coap://localhost'
     request.opt.uri_path = ("Main", "Minecraft")
 
     response = await context.request(request).response
 
-    print('Result: %s\n%r' % (response.code, response.payload))
+    print('Result: {0}\n{1}'.format(response.code, response.payload))
 
 async def main():
 
