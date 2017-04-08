@@ -18,7 +18,7 @@ async def mine_get():
         print('Failed to fetch resource:')
         print(e)
     else:
-        print('Result: {0}{1}'.format(response.code, response.payload))
+        print('Result: %s{0}\n%r{1}'.format(response.code, response.payload))
 
 async def mine_put():
 
