@@ -18,7 +18,7 @@ async def mine_get():
         print('Failed to fetch resource:')
         print(e)
     else:
-        print('Result: %s{0}\n%r{1}'.format(response.code, response.payload))
+        print('Result: {0}\n{1}'.format(response.code, response.payload))
 
 async def mine_put():
 
@@ -38,7 +38,7 @@ async def mine_put():
 async def main():
 
     await mine_get()
-    #await mine_put()
+    await mine_put()
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
