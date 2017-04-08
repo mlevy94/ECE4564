@@ -4,7 +4,9 @@ import time
 
 class playerLed:
 
-    def getturn(self):
+    def gettoken(self):
+        if self.turn == -1:
+            return 0
         return (self.turn % self.numplayers) + 1
 
     def incrementturn(self):
@@ -33,9 +35,15 @@ class playerLed:
         self.numplayers = 0
 
     def color(self):
-        col = self.turn % 3
 
-        if col == 1:
+        col = self.gettoken()
+
+        if col == -1:
+            GPIO.output(4, GPIO.HIGH)
+            GPIO.output(17, GPIO.HIGH)
+            GPIO.output(27, GPIO.HIGH)
+
+        elif col == 1:
             GPIO.output(17,GPIO.LOW)
             GPIO.output(27,GPIO.LOW)
             GPIO.output(4,GPIO.HIGH)
@@ -45,10 +53,15 @@ class playerLed:
             GPIO.output(27,GPIO.LOW)
             GPIO.output(17,GPIO.HIGH)
 
-        else:
+        elif col == 3:
             GPIO.output(4, GPIO.LOW)
             GPIO.output(17, GPIO.LOW)
             GPIO.output(27, GPIO.HIGH)
+
+        else:
+            GPIO.output(4, GPIO.LOW)
+            GPIO.output(17, GPIO.LOW)
+            GPIO.output(27, GPIO.LOW)
 
 
 if __name__ == "__main__":
