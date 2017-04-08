@@ -10,7 +10,7 @@ async def mine_get():
 
     protocol = await Context.create_client_context()
 
-    request = Message(code=aiocoap.Get, uri='coap://localhost/Main/Minecraft')
+    request = Message(code=GET, uri='coap://localhost/Main/Minecraft')
 
     try:
         response = await protocol.request(request).response
@@ -27,7 +27,7 @@ async def mine_put():
     await asyncio.sleep(2)
 
     payload = "update minecraft with put"
-    request = Message(code=aiocoap.PUT, payload=payload)
+    request = Message(code=PUT, payload=payload)
     request.opt.uri_host = 'coap://localhost'
     request.opt.uri_path = ("Main", "Minecraft")
 
@@ -36,7 +36,7 @@ async def mine_put():
     print('Result: %s\n%r' % (response.code, response.payload))
 
 async def main():
-    
+
     await mine_get()
     await mine_put()
 
