@@ -18,7 +18,7 @@ async def mine_get():
         print('Failed to fetch resource:')
         print(e)
     else:
-        print('Result: %s{0}\n%r{1}'.format(response.code, response.payload))
+        print('Result: {0}\n{1}'.format(response.code, response.payload))
 
 async def mine_put():
 
@@ -26,9 +26,9 @@ async def mine_put():
 
     await asyncio.sleep(2)
 
-    payload = "update minecraft with put"
+    payload = b"update minecraft with put\n"
     request = Message(code=PUT, payload=payload)
-    request.opt.uri_host = 'coap://localhost'
+    request.opt.uri_host = '127.0.0.1'
     request.opt.uri_path = ("Main", "Minecraft")
 
     response = await context.request(request).response
@@ -37,8 +37,8 @@ async def mine_put():
 
 async def main():
 
-    await mine_get()
-    #await mine_put()
+#    await mine_get()
+    await mine_put()
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())

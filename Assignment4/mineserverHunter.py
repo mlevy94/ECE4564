@@ -13,7 +13,7 @@ class MinecraftResource(resource.Resource):
     async def render_get(self, request):
         await asyncio.sleep(3)
 
-        self.content = "current location in minecraft:".encode("ascii")  # needs to be filled out
+        self.content = "current location in minecraft:".encode()  # needs to be filled out
 
         return aiocoap.Message(payload=self.content)
 
@@ -23,7 +23,7 @@ class MinecraftResource(resource.Resource):
         self.content = request.payload
 
         pl = ('I\'ve accepted the new payload. You may inspect it here in ' \
-                   'Python\'s repr format:\n\n{0})'.format({self.content}))
+                   'Python\'s repr format:\n\n{0})'.format({self.content})).encode()
         return aiocoap.Message(payload=pl)
 
 
