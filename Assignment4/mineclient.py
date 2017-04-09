@@ -8,22 +8,22 @@ blocks = [5, 57, 1]
 
 async def runGame(client):
   # join game and get token
-  myToken = client.joinGame()
+  myToken = await client.joinGame()
   # wait for 3 players to join
-  while client.getPlayers() < 3:
+  while await client.getPlayers() < 3:
     sleep(1)
   # determine starting block placement
   top = myToken % 2 == 0
   while True:
     # check to see if it's my turn
-    token, x, y, z = client.getGameState()
+    token, x, y, z = await client.getGameState()
     if token == 0:
       break  # end game
     elif token == myToken:
       if top:  # place a block on the top of this column or bottom of next column
-        client.placeBlock(myToken, x, y + 1, z, blocks[myToken])
+        await client.placeBlock(myToken, x, y + 1, z, blocks[myToken])
       else:
-        client.placeBlock(myToken, x + 1, y, z, blocks[myToken])
+        await client.placeBlock(myToken, x + 1, y, z, blocks[myToken])
     sleep(1)
 
 class Client:
@@ -53,7 +53,7 @@ class Client:
       print('Failed to fetch resource:')
       print(e)
     else:
-      return request.payload
+      return response.payload
   
   async def mine_put(self, payload):
     context = await Context.create_client_context()
