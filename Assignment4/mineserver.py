@@ -11,6 +11,11 @@ class MinePlayer:
   def __init__(self):
     self.mc = Minecraft.create()
     self.mc.postToChat("I'm Alive!!!")
+    
+    self.mc.setBlocks(-128, 0, -128, 128, 64, 128, 0)
+    bid = 20
+
+    self.mc.setBlocks(-128, 0, -128, 128, -64, 128, bid)
   
   def playerPosition(self):
     # Find block player is standing on returns (x,y,z) coordinates
@@ -138,13 +143,11 @@ class playerLed:
       GPIO.output(27, GPIO.LOW)
 
 if __name__ == "__main__":
-    # set up broadcast server
-    # wait for 3 players to connect
-    print("Waiting for 3 players to connect...")
     tokenizer = playerLed()
     game = Game(tokenizer)
+    
     root = resource.Site()
     root.add_resource(('Main', 'Minecraft'), MinecraftResource(game))
-
     asyncio.Task(aiocoap.Context.create_server_context(root))
+    print("Waiting for 3 players to connect...")
     asyncio.get_event_loop().run_forever()
