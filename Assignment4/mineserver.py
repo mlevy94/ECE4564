@@ -53,7 +53,7 @@ class Game:
     return self.tokenizer.addplayer()
   
   def getPlayers(self):
-    return self.tokenizer.getPlayers()
+    return self.tokenizer.getplayers()
 
 class MinecraftResource(resource.Resource):
   def __init__(self, game, *args, **kargs):
