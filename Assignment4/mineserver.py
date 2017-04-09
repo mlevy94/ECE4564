@@ -46,6 +46,9 @@ class Game:
     
   def addPlayer(self):
     return self.tokenizer.addplayer()
+  
+  def getPlayers(self):
+    return self.tokenizer.getPlayers()
 
 class MinecraftResource(resource.Resource):
   def __init__(self, game, *args, **kargs):
@@ -57,6 +60,9 @@ class MinecraftResource(resource.Resource):
     if request.payload == b'Assign':
       playerToken = (self.game.addPlayer(),)
       return aiocoap.Message(payload=pickle.dumps(playerToken))
+    elif request.payload == b'Players':
+      players = (self.game.getPlayers(),)
+      return aiocoap.Message(payload=pickle.dumps(players))
     else:
       gameState = self.game.getState()
       return aiocoap.Message(payload=pickle.dumps(gameState))
@@ -85,7 +91,7 @@ class playerLed:
     self.numplayers += 1
     return self.numplayers
 
-  def getplayer(self):
+  def getplayers(self):
     return self.numplayers
 
   def __del__(self):

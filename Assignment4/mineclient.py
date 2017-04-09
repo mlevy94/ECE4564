@@ -7,14 +7,20 @@ import pickle
 blocks = [5, 57, 1]
 
 async def runGame(client):
+  # join game and get token
   myToken = client.joinGame()
+  # wait for 3 players to join
+  while client.getPlayers() < 3:
+    sleep(1)
+  # determine starting block placement
   top = myToken % 2 == 0
   while True:
+    # check to see if it's my turn
     token, x, y, z = client.getGameState()
     if token == 0:
-      break
+      break  # end game
     elif token == myToken:
-      if top:
+      if top:  # place a block on the top of this column or bottom of next column
         client.placeBlock(myToken, x, y + 1, z, blocks[myToken])
       else:
         client.placeBlock(myToken, x + 1, y, z, blocks[myToken])
@@ -24,19 +30,18 @@ class Client:
   
   def __init__(self, addr):
     self.addr = addr
-    self.payload = None
     
   async def joinGame(self):
-    await self.mine_get(b'Assign')
-    return pickle.loads(self.payload)[0]
+    return pickle.loads(await self.mine_get(b'Assign'))[0]
     
   async def getGameState(self):
-    await self.mine_get()
-    return pickle.loads(self.payload)
+    return pickle.loads(await self.mine_get())
   
   async def placeBlock(self, token, x, y, z, block):
     await self.mine_put((token, x, y, z, block))
     
+  async def getPlayers(self):
+    return pickle.loads(await self.mine_get(b'Players'))[0]
 
   async def mine_get(self, payload=b''):
     protocol = await Context.create_client_context()
@@ -48,8 +53,7 @@ class Client:
       print('Failed to fetch resource:')
       print(e)
     else:
-      self.payload = request.payload
-  
+      return request.payload
   
   async def mine_put(self, payload):
     context = await Context.create_client_context()
@@ -72,6 +76,8 @@ if __name__ == "__main__":
     
     client = Client(fields.server)
     
-    asyncio.get_event_loop().run_until_complete(runGame(client))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(runGame(client))
+    loop.close()
 
 
