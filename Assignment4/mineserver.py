@@ -47,12 +47,13 @@ class Game:
     self.game.setBlock(x, y, z, block)
     self.tokenizer.incrementturn()
     if self.tokenizer.getturn() >= self.endGame:
-      self.tokenizer.turn = 0
+      self.tokenizer.turn = -1
       self.tokenizer.color()
       self.tokenizer.numplayers = 0
       
   def getState(self):
     x, y, z = self.game.playerPosition()
+    self.tokenizer.color()
     return x, y, z, self.tokenizer.gettoken()
     
   def addPlayer(self):
@@ -120,12 +121,9 @@ class playerLed:
     self.numplayers = 0
 
   def color(self):
-    try:
-      col = self.gettoken()
-    except ZeroDivisionError:
-      col = 0
+    col = self.gettoken()
   
-    if col == 0:
+    if col == -1:
       GPIO.output(4, GPIO.HIGH)
       GPIO.output(17, GPIO.HIGH)
       GPIO.output(27, GPIO.HIGH)
