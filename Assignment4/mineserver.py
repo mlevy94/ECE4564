@@ -16,6 +16,7 @@ class MinePlayer:
     bid = 2
 
     self.mc.setBlocks(-128, 0, -128, 128, -64, 128, bid)
+    self.mc.postToChat("BRING ME PLAYERS!!!")
   
   def playerPosition(self):
     # Find block player is standing on returns (x,y,z) coordinates
@@ -39,8 +40,8 @@ class Game:
     self.initX, self.initY, self.initZ = self.game.playerPosition()
     
   def putBlock(self, token, x, y, z, block):
-    if token != self.tokenizer.getturn():
-      print("Wrong token trying to move!")
+    if token != self.tokenizer.gettoken():
+      print("Wrong token trying to move! Expected: {} Received: {}".format(self.tokenizer.gettoken(), token))
       return
     self.game.setBlock(x, y, z, block)
     self.tokenizer.incrementturn()
