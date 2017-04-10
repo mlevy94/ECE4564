@@ -9,6 +9,7 @@ blocks = [5, 57, 1]
 async def runGame(client):
   # join game and get token
   myToken = await client.joinGame()
+  print("Connected. Token Recieved: {}".format(myToken))
   # wait for 3 players to join
   while await client.getPlayers() < 3:
     print("Waiting for 3 players to connect...")
@@ -24,9 +25,9 @@ async def runGame(client):
     elif token == myToken:
       print("My Turn to move.")
       if top:  # place a block on the top of this column or bottom of next column
-        await client.placeBlock(myToken, x, y + 1, z, blocks[myToken])
+        await client.placeBlock(myToken, x, y + 1, z, blocks[myToken - 1])
       else:
-        await client.placeBlock(myToken, x + 1, y, z, blocks[myToken])
+        await client.placeBlock(myToken, x + 1, y, z, blocks[myToken - 1])
     else:
       print("Not my turn to move.")
     sleep(1)
