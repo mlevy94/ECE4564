@@ -12,10 +12,11 @@ class MinePlayer:
     self.mc = Minecraft.create()
     self.mc.postToChat("I'm Alive!!!")
     
-    self.mc.setBlocks(-128, 0, -128, 128, 64, 128, 0)
+    self.mc.setBlocks(-258, 0, -256, 256, 64, 256, 0)
     bid = 2
-
-    self.mc.setBlocks(-128, 0, -128, 128, -64, 128, bid)
+  
+    self.mc.setBlocks(-256, 0, -256, 256, -64, 256, bid)
+    self.mc.player.setTilePos(0, 0, 0)
     self.mc.postToChat("BRING ME PLAYERS!!!")
   
   def playerPosition(self):
