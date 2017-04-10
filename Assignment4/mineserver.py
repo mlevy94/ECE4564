@@ -88,10 +88,10 @@ class MinecraftResource(resource.Resource):
 class playerLed:
 
   def gettoken(self):
-    if self.turn == -1:
-      return -1
-    else:
+    try:
       return (self.turn % self.numplayers) + 1
+    except ZeroDivisionError:
+      return -1
 
   def incrementturn(self):
     self.turn += 1
