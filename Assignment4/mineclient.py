@@ -28,6 +28,7 @@ async def runGame(client):
         await client.placeBlock(myToken, x, y + 1, z, blocks[myToken - 1])
       else:
         await client.placeBlock(myToken, x + 1, y, z, blocks[myToken - 1])
+      top = not top
     else:
       print("Not my turn to move.")
     sleep(1)
