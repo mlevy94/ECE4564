@@ -13,7 +13,7 @@ class MinePlayer:
     self.mc.postToChat("I'm Alive!!!")
     
     self.mc.setBlocks(-128, 0, -128, 128, 64, 128, 0)
-    bid = 20
+    bid = 2
 
     self.mc.setBlocks(-128, 0, -128, 128, -64, 128, bid)
   
