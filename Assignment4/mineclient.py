@@ -71,8 +71,6 @@ class Client:
     request.opt.uri_path = ("Main", "Minecraft")
     
     response = await context.request(request).response
-    
-    print('Result: {0}\n{1}'.format(response.code, response.payload))
 
 if __name__ == "__main__":
     # Command Line Arguments

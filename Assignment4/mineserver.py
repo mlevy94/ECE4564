@@ -26,7 +26,7 @@ class MinePlayer:
   def setBlock(self, x, y, z, block):
     # Set position and block
     self.mc.player.setPos(x, y, z)
-    self.mc.setBlock(x + 1, y, z, block)
+    self.mc.setBlock(x, y, z + 2, block)
 
 
 
