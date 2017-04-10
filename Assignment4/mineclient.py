@@ -19,7 +19,7 @@ async def runGame(client):
   while True:
     # check to see if it's my turn
     x, y, z, token = await client.getGameState()
-    if token == 0:
+    if token == -1:
       print("Game Over!")
       break  # end game
     elif token == myToken:

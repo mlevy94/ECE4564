@@ -33,7 +33,7 @@ class MinePlayer:
 
 class Game:
   
-  endGame = 40
+  endGame = 20
   
   def __init__(self, tokenizer):
     self.tokenizer = tokenizer
@@ -47,7 +47,7 @@ class Game:
     self.game.setBlock(x, y, z, block)
     self.tokenizer.incrementturn()
     if self.tokenizer.getturn() >= self.endGame:
-      self.tokenizer.turn = -1
+      self.tokenizer.turn = 0
       self.tokenizer.color()
       self.tokenizer.numplayers = 0
       
