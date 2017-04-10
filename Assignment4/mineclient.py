@@ -11,6 +11,7 @@ async def runGame(client):
   myToken = await client.joinGame()
   # wait for 3 players to join
   while await client.getPlayers() < 3:
+    print("Waiting for 3 players to connect...")
     sleep(1)
   # determine starting block placement
   top = myToken % 2 == 0

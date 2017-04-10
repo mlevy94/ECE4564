@@ -50,6 +50,7 @@ class Game:
     return x, y, z, self.tokenizer.gettoken()
     
   def addPlayer(self):
+    print("Player {} Connected.".format(self.tokenizer.getplayers()))
     return self.tokenizer.addplayer()
   
   def getPlayers(self):
