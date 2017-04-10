@@ -13,7 +13,7 @@ class MinePlayer:
     self.mc = Minecraft.create()
     self.mc.postToChat("I'm Alive!!!")
     
-    #Render flat world on position player on top
+    #Render flat world on position player on top and center
     self.mc.setBlocks(-258, 0, -256, 256, 64, 256, 0)
     bid = 2
     self.mc.setBlocks(-256, 0, -256, 256, -64, 256, bid)
@@ -36,34 +36,41 @@ class MinePlayer:
 
 class Game:
   
-  endGame = 20
+  endGame = 20  # turns game lasts
   
+  # initialize everything
   def __init__(self, tokenizer):
     self.tokenizer = tokenizer
     self.game = MinePlayer()
     self.initX, self.initY, self.initZ = self.game.playerPosition()
     
+  # put block and increment player token
   def putBlock(self, token, x, y, z, block):
+    # make sure the correct player is moving
     if token != self.tokenizer.gettoken():
       print("Wrong token trying to move! Expected: {} Received: {}".format(self.tokenizer.gettoken(), token))
       return
     self.game.setBlock(x, y, z, block)
     self.tokenizer.incrementturn()
+    # end game
     if self.tokenizer.getturn() >= self.endGame:
       self.tokenizer.turn = -1
       self.tokenizer.color()
       self.tokenizer.numplayers = 0
       
+  # get the state of the game including coordinates and player turn
   def getState(self):
     x, y, z = self.game.playerPosition()
     self.tokenizer.color()
     return x, y, z, self.tokenizer.gettoken()
     
+  # add a player to the game
   def addPlayer(self):
     ret =  self.tokenizer.addplayer()
     print("Player {} Connected.".format(self.tokenizer.getplayers()))
     return ret
   
+  # get the number of players in the game
   def getPlayers(self):
     return self.tokenizer.getplayers()
 

@@ -4,8 +4,9 @@ import asyncio
 from aiocoap import Context, Message, PUT, GET
 import pickle
 
-blocks = [5, 57, 1]
+blocks = [5, 57, 1]  # wood, diamond, stone
 
+# main game loop. Each client does its own thing
 async def runGame(client):
   # join game and get token
   myToken = await client.joinGame()
@@ -24,14 +25,14 @@ async def runGame(client):
       break  # end game
     elif token == myToken:
       print("My Turn to move.")
-      if top:  # place a block on the top of this column or bottom of next column
+      if top:  # place a block on the top of this column
         await client.placeBlock(myToken, x, y + 1, z, blocks[myToken - 1])
-      else:
+      else:    # place a block on the bottom of the next column
         await client.placeBlock(myToken, x + 1, y, z, blocks[myToken - 1])
-      top = not top
+      top = not top  # alternate block placement
     else:
       print("Not my turn to move.")
-    sleep(0.5)
+    sleep(1)
 
 class Client:
   
