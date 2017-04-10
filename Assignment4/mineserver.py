@@ -38,7 +38,10 @@ class Game:
     self.game = MinePlayer()
     self.initX, self.initY, self.initZ = self.game.playerPosition()
     
-  def putBlock(self, x, y, z, block):
+  def putBlock(self, token, x, y, z, block):
+    if token != self.tokenizer.getturn():
+      print("Wrong token trying to move!")
+      return
     self.game.setBlock(x, y, z, block)
     self.tokenizer.incrementturn()
     if self.tokenizer.getturn() >= self.endGame:
