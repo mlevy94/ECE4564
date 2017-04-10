@@ -125,7 +125,7 @@ class playerLed:
     except ZeroDivisionError:
       col = 0
   
-    if col == -1:
+    if col == 0:
       GPIO.output(4, GPIO.HIGH)
       GPIO.output(17, GPIO.HIGH)
       GPIO.output(27, GPIO.HIGH)
