@@ -73,12 +73,12 @@ class Game:
   # get the number of players in the game
   def getPlayers(self):
     return self.tokenizer.getplayers()
-
+#setting up the resources to aces with and get and put
 class MinecraftResource(resource.Resource):
   def __init__(self, game, *args, **kargs):
     super().__init__(*args, **kargs)
     self.game = game
-
+  #the GET resurces available. depending on payload passed get different values
   async def render_get(self, request):
     if request.payload == b'Assign':
       playerToken = (self.game.addPlayer(),)
@@ -89,7 +89,7 @@ class MinecraftResource(resource.Resource):
     else:
       gameState = self.game.getState()
       return aiocoap.Message(payload=pickle.dumps(gameState))
-
+  #the Put resource. only used for block placement.
   async def render_put(self, request):
     blockPlace = pickle.loads(request.payload)
     self.game.putBlock(*blockPlace)
