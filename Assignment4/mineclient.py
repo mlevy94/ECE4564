@@ -17,14 +17,18 @@ async def runGame(client):
   top = myToken % 2 == 0
   while True:
     # check to see if it's my turn
-    token, x, y, z = await client.getGameState()
+    x, y, z, token = await client.getGameState()
     if token == 0:
+      print("Game Over!")
       break  # end game
     elif token == myToken:
+      print("My Turn to move.")
       if top:  # place a block on the top of this column or bottom of next column
         await client.placeBlock(myToken, x, y + 1, z, blocks[myToken])
       else:
         await client.placeBlock(myToken, x + 1, y, z, blocks[myToken])
+    else:
+      print("Not my turn to move.")
     sleep(1)
 
 class Client:
