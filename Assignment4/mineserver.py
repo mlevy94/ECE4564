@@ -16,7 +16,7 @@ class MinePlayer:
     bid = 2
   
     self.mc.setBlocks(-256, 0, -256, 256, -64, 256, bid)
-    self.mc.player.setTilePos(0, 0, 0)
+    self.mc.player.setTilePos(0, 1, 0)
     self.mc.postToChat("BRING ME PLAYERS!!!")
   
   def playerPosition(self):
@@ -26,7 +26,7 @@ class MinePlayer:
   
   def setBlock(self, x, y, z, block):
     # Set position and block
-    self.mc.player.setTilePos(x, y, z)
+    self.mc.player.setTilePos(x, 1, z)
     self.mc.setBlock(x, y, z + 2, block)
 
 
