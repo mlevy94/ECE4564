@@ -9,21 +9,24 @@ import aiocoap
 class MinePlayer:
 
   def __init__(self):
+    #Connect to minecraft server
     self.mc = Minecraft.create()
     self.mc.postToChat("I'm Alive!!!")
     
+    #Render flat world on position player on top
     self.mc.setBlocks(-258, 0, -256, 256, 64, 256, 0)
     bid = 2
-  
     self.mc.setBlocks(-256, 0, -256, 256, -64, 256, bid)
     self.mc.player.setTilePos(0, 1, 0)
     self.mc.postToChat("BRING ME PLAYERS!!!")
   
+  #Reset player position to cooridinates recieved by autmation
   def playerPosition(self):
     # Find block player is standing on returns (x,y,z) coordinates
     playerPos = self.mc.player.getTilePos()
     return playerPos.x, playerPos.y, playerPos.z
   
+  #Function used to build the wall at coordinates recieved from automation
   def setBlock(self, x, y, z, block):
     # Set position and block
     self.mc.player.setTilePos(x, 1, z)
