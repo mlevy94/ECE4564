@@ -97,29 +97,36 @@ class MinecraftResource(resource.Resource):
 
 class playerLed:
 
+#returns the value of the current token
   def gettoken(self):
     try:
       return (self.turn % self.numplayers) + 1
     except ZeroDivisionError:
       return -1
 
+#increments the turn count by one and updates LED color
   def incrementturn(self):
     self.turn += 1
     self.color()
 
+#returns the current turn number
   def getturn(self):
     return self.turn
 
+#adds one player and returns the number of players
   def addplayer(self):
     self.numplayers += 1
     return self.numplayers
 
+#returns the number of players
   def getplayers(self):
     return self.numplayers
 
+#turns off LEDs once program terminates
   def __del__(self):
     GPIO.cleanup()
 
+#initilaizes class member variables and prepares GPIO pins for output
   def __init__(self):
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
@@ -129,6 +136,7 @@ class playerLed:
     self.turn = 0
     self.numplayers = 0
 
+#updates LED color based on token
   def color(self):
     col = self.gettoken()
   
