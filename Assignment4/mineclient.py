@@ -31,7 +31,6 @@ async def runGame(client):
       top = not top
     else:
       print("Not my turn to move.")
-    sleep(0.3)
 
 class Client:
   

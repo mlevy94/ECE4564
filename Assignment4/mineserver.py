@@ -69,7 +69,7 @@ class MinecraftResource(resource.Resource):
     self.game = game
 
   async def render_get(self, request):
-    await asyncio.sleep(3)
+    await asyncio.sleep(1)
     if request.payload == b'Assign':
       playerToken = (self.game.addPlayer(),)
       return aiocoap.Message(payload=pickle.dumps(playerToken))
