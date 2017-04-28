@@ -3,7 +3,7 @@ from time import sleep
 
 host = input("host ip: ")
 client = SockClient(host)
-outMessage = input("message to send: ")
-client.send(outMessage)
+while 1
+    outMessage = input("height to send: ")
+    client.send(outMessage)
 
-servsock, finalMessage = client.recv()
