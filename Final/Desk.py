@@ -23,7 +23,7 @@ class Desk:
     self.heightPWM = GPIO.PWM(self.heightPIN, 1000)
     self.heightPWM.start(0)
     self.queue = queue.Queue()
-    self.heightThread = threading.Thread(target=self._setHeights)
+    self.heightThread = threading.Thread(target=self._setHeights, daemon=True)
     self.heightThread.start()
     
   def __del__(self):
