@@ -1,7 +1,7 @@
 from RPi import GPIO
 from sockcomm import SockServer
 from time import sleep
-import pyserial
+import serial
 import queue
 import threading
 
@@ -17,7 +17,7 @@ class Desk:
   maxHeight = 70
   
   # serial device
-  serDev = '/dev/tty/ACM0'
+  serDev = '/dev/ttyACM0'
   
   def __init__(self):
     GPIO.setmode(GPIO.BCM)
@@ -35,7 +35,7 @@ class Desk:
     
   def getHeight(self):
     with self.lock:
-      return self.currHeight
+      return (self.currHeight / 1024) * (self.maxHeight - self.minHeight) + self.minHeight
   
   def setHeight(self, height):
     with self.lock:
@@ -44,31 +44,45 @@ class Desk:
   def _setHeights(self):
     while True:
       height = self.queue.get()
+      print("Received height: {}".format(height))
+      if not isinstance(height, int):
+        height = int(height)
       if height < self.minHeight:
         height = self.minHeight
       elif height > self.maxHeight:
         height = self.maxHeight
       GPIO.output(self.directionPIN, height > self.getHeight())
-      if height > self.getHeight():
-        heightCheck = lambda self: height <= self.getHeight()
+      print("Direction Pin {}!".format("On" if height > self.getHeight() else "Off"))
+      if height < self.getHeight():
+        heightCheck = lambda: height <= self.getHeight()
       else:
-        heightCheck = lambda self: height >= self.getHeight()
+        heightCheck = lambda: height >= self.getHeight()
       GPIO.output(self.controlPIN, True)
       while heightCheck():
+        print("Current Height: {}".format(self.getHeight()))
         sleep(0.25)
+      print("Height Reached!")
       GPIO.output(self.controlPIN, False)
       self.queue.task_done()
       
   def _getHeight(self):
-    serial = pyserial.Serial(self.serDev, 9600)
+    ser = serial.Serial(self.serDev, 9600)
     while True:
-      height = serial.readline()
-      self.setHeight(height)
-      
+      try:
+        height = int(ser.readline())
+        self.setHeight(height)
+      except ValueError:
+        pass
     
     
 
 if __name__ == "__main__":
-  desk = Desk()
-  server = SockServer(addr="0.0.0.0")
-  desk.queue.put(server.recv()[1])
+  try:
+    desk = Desk()
+    server = SockServer(addr="0.0.0.0")
+    print("Waiting for clients to connect.")
+    while True:
+      desk.queue.put(server.recv()[1])
+  finally:
+    GPIO.cleanup()
+
