@@ -38,7 +38,7 @@ def create_desk():
         'occupied': False,
         'beacon': request.json['beacon']
     }
-    duplicate = [duplicate for duplicate in desks if duplicate['beacon'] == request.json['beacon']
+    duplicate = [duplicate for duplicate in desks if duplicate['beacon'] == request.json['beacon']]
     if len(duplicate) != 0:
         abort(400)
     desks.append(desk)
