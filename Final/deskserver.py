@@ -16,7 +16,7 @@ class DeskServer:
             json_data = open('data.json').read()
             self.data = json.loads(json_data)
             for desk in self.data['desks']:
-                self.desks.append(self, desk)
+                self.desks.append(desk)
                 payload = json.dumps(desk)
                 r = requests.post(self.url + 'desk', json=json.loads(payload))
 
