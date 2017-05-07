@@ -22,6 +22,13 @@ def get_desk(desk_id):
         abort(404)
     return jsonify({'desk': desk[0]})
 	
+@app.route('/desk/<int:desk_beacon>', methods=['GET'])
+def get_desk(desk_beacon):
+    desk = [desk for desk in desks if desk['beacon'] == desk_beacon]
+    if len(desk) == 0:
+        abort(404)
+    return jsonify({'desk': desk[0]})
+	
 @app.route('/desk', methods=['POST'])
 def create_desk():
     if not request.json or not 'ip' in request.json:
@@ -31,6 +38,9 @@ def create_desk():
         'occupied': False,
         'beacon': request.json['beacon']
     }
+	duplicate = [duplicate for duplicate in desks if duplicate['beacon'] == request.json['beacon']
+	if len(duplicate) != 0:
+		abort(400)
     desks.append(desk)
     return jsonify({'desk': desk}), 201
 	
@@ -52,9 +62,9 @@ def update_desk(desk_id):
     desk[0]['beacon'] = request.json.get('beacon', desk[0]['beacon'])
     return jsonify({'desk': desk[0]})
 
-@app.route('/test/<int:desk_id>', methods=['DELETE'])
-def delete_desk(desk_id):
-    desk = [desk for desk in desks if desk['id'] == desk_id]
+@app.route('/test/<int:desk_beacon>', methods=['DELETE'])
+def delete_desk(desk_beacon):
+    desk = [desk for desk in desks if desk['beacon'] == desk_beacon]
     if len(desk) == 0:
         abort(404)
     desks.remove(desk[0])

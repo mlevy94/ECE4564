@@ -20,6 +20,22 @@ class DeskServer:
                 payload = json.dumps(desk)
                 r = requests.post(self.url + 'desk', json=json.loads(payload))
 
+    def update(self, old_beacon, new_beacon, ip, occupied):
+        updated_desk = {'beacon': new_beacon, 'ip': ip, 'occupied': occupied}
+        payload = json.dumps(updated_desk)
+        r = requests.put(self.url + 'desk/' + str(old_beacon), json=json.loads(payload))
+        return r.ok()
+
+    def add_desk(self, beacon, ip):
+        new_desk = {'beacon' : beacon, 'ip' : ip}
+        payload = json.dumps(new_desk)
+        r = requests.post(self.url + 'desk', json=json.loads(payload))
+        return r.ok()
+
+    def remove_desk(self, beacon):
+        r = requests.delete(self.url + 'desk/' + str(beacon))
+        return r.ok()
+
 if __name__ == '__main__':
 
     ds = DeskServer()
