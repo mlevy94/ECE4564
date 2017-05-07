@@ -1,75 +1,63 @@
 #!flask/bin/python
 from flask import Flask, jsonify, abort, make_response, request
+import io
+import os
 
 app = Flask(__name__)
 
-tasks = [
-    {
-        'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol', 
-        'done': False
-    },
-    {
-        'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web', 
-        'done': False
-    }
-]
+desks = []
 
 @app.route('/')
 def index():
    return "Hello, World!"
 	
-@app.route('/test', methods=['GET'])
-def get_tasks():
-    return jsonify({'tasks': tasks})
+@app.route('/desk', methods=['GET'])
+def get_desks():
+    return jsonify({'desks': desks})
 	
-@app.route('/test/<int:task_id>', methods=['GET'])
-def get_task(task_id):
-    task = [task for task in tasks if task['id'] == task_id]
-    if len(task) == 0:
+@app.route('/desk/<str:desk_ip>', methods=['GET'])
+def get_desk(desk_id):
+    desk = [desk for desk in desks if desk['ip'] == desk_ip]
+    if len(desk) == 0:
         abort(404)
-    return jsonify({'task': task[0]})
+    return jsonify({'desk': desk[0]})
 	
-@app.route('/test', methods=['POST'])
-def create_task():
-    if not request.json or not 'title' in request.json:
+@app.route('/desk', methods=['POST'])
+def create_desk():
+    if not request.json or not 'ip' in request.json:
         abort(400)
-    task = {
-        'id': tasks[-1]['id'] + 1,
-        'title': request.json['title'],
-        'description': request.json.get('description', ""),
-        'done': False
+    desk = {
+        'ip': request.json['ip'],
+        'occupied': False,
+        'beacon': request.json['beacon']
     }
-    tasks.append(task)
-    return jsonify({'task': task}), 201
+    desks.append(desk)
+    return jsonify({'desk': desk}), 201
 	
-@app.route('/test/<int:task_id>', methods=['PUT'])
-def update_task(task_id):
-    task = [task for task in tasks if task['id'] == task_id]
-    if len(task) == 0:
+@app.route('/desk/<int:desk_beacon>', methods=['PUT'])
+def update_desk(desk_id):
+    desk = [desk for desk in desks if desk['beacon'] == desk_beacon]
+    if len(desk) == 0:
         abort(404)
     if not request.json:
         abort(400)
-    if 'title' in request.json and type(request.json['title']) != str:
+    if 'ip' in request.json and type(request.json['ip']) != str:
         abort(400)
-    if 'description' in request.json and type(request.json['description']) is not str:
+    if 'occupied' in request.json and type(request.json['occupied']) is not bool:
         abort(400)
-    if 'done' in request.json and type(request.json['done']) is not bool:
+    if 'beacon' in request.json and type(request.json['beacon']) is not int:
         abort(400)
-    task[0]['title'] = request.json.get('title', task[0]['title'])
-    task[0]['description'] = request.json.get('description', task[0]['description'])
-    task[0]['done'] = request.json.get('done', task[0]['done'])
-    return jsonify({'task': task[0]})
+    desk[0]['ip'] = request.json.get('ip', desk[0]['ip'])
+    desk[0]['occupied'] = request.json.get('occupied', desk[0]['occupied'])
+    desk[0]['beacon'] = request.json.get('beacon', desk[0]['beacon'])
+    return jsonify({'desk': desk[0]})
 
-@app.route('/test/<int:task_id>', methods=['DELETE'])
-def delete_task(task_id):
-    task = [task for task in tasks if task['id'] == task_id]
-    if len(task) == 0:
+@app.route('/test/<int:desk_id>', methods=['DELETE'])
+def delete_desk(desk_id):
+    desk = [desk for desk in desks if desk['id'] == desk_id]
+    if len(desk) == 0:
         abort(404)
-    tasks.remove(task[0])
+    desks.remove(desk[0])
     return jsonify({'result': True})
 
 @app.errorhandler(404)

@@ -1,0 +1,19 @@
+{
+	"desks":[
+		{
+			"ip" : "0.0.0.1",
+			"occupied" : false,
+			"beacon" : 1
+		},
+		{
+			"ip" : "0.0.0.2",
+			"occupied" : false,
+			"beacon" : 2
+		},
+		{
+			"ip" : "0.0.0.3",
+			"occupied" : false,
+			"beacon" : 3
+		}
+	]
+}
