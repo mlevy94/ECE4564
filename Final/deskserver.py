@@ -36,6 +36,21 @@ class DeskServer:
         r = requests.delete(self.url + 'desk/' + str(beacon))
         return r.ok
 
+    def get_desk(self, beacon):
+        r = requests.get(self.url + 'desk' + str(beacon))
+        desk = r.json()
+        return desk
+
+    def get_in_use(self, beacon):
+        desk = self.get_desk(beacon)
+        return desk['occupied']
+
+    def set_in_use(self, beacon, occupied):
+        use = {'occupied' : occupied}
+        payload = json.dumps(use)
+        r = requests.put(self.url + 'desk/use/' + str(beacon), json=json.loads(payload))
+        return r.ok
+
 if __name__ == '__main__':
 
     ds = DeskServer()
