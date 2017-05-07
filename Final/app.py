@@ -16,7 +16,7 @@ def get_desks():
     return jsonify({'desks': desks})
 	
 @app.route('/desk/ip/<string:desk_ip>', methods=['GET'])
-def get_desk(desk_id):
+def get_desk_from_ip(desk_ip):
     desk = [desk for desk in desks if desk['ip'] == desk_ip]
     if len(desk) == 0:
         abort(404)
