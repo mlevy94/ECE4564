@@ -15,18 +15,23 @@ def enter():
     uuid = request.args.get('uuid', None)
     height = request.args.get('height', None)
     user = request.args.get('user', None)
-    desk = desks.findOne({'_id' : uuid})
+    desk = desks.find_one({'_id' : uuid})
+    import pdb; pdb.set_trace()
     if desk['occupied']:
-        return
-    desks.updateOne({'_id' : uuid}, { '$set': {'user': user, 'occupied' : True}})
+        return ''
+    desks.update_one({'_id' : uuid}, { '$set': {'user': user, 'occupied' : True}})
     client = SockClient(desk['ip'])
     client.send(json.dumps({'height':height}))
+    return ''
 
 @app.route('/exit', methods=['POST'])
 def exit_desk():
     user = request.args.get('user', None)
     uuid = request.args.get('uuid', None)
-    desk = desks.findOne({'_id': uuid})
+    desk = desks.find_one({'_id': uuid})
     if desk['user'] != user:
-        return
-    desks.updateOne({'_id': uuid}, {'$set': {'user': None, 'occupied': False}})
+        return ''
+    desks.update_one({'_id': uuid}, {'$set': {'user': None, 'occupied': False}})
+    return ''
+
+app.run(host='0.0.0.0')
