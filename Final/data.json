@@ -3,17 +3,20 @@
 		{
 			"ip" : "0.0.0.1",
 			"occupied" : false,
-			"beacon" : 1
+			"_id" : 1,
+			"user" : null
 		},
 		{
 			"ip" : "0.0.0.2",
 			"occupied" : false,
-			"beacon" : 2
+			"_id" : 2,
+			"user" : null
 		},
 		{
 			"ip" : "0.0.0.3",
 			"occupied" : false,
-			"beacon" : 3
+			"_id" : 3,
+			"user" : null
 		}
 	]
 }
