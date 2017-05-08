@@ -1,22 +1,20 @@
-{
-	"desks":[
-		{
-			"ip" : "0.0.0.1",
-			"occupied" : false,
-			"_id" : "1",
-			"user" : null
-		},
-		{
-			"ip" : "0.0.0.2",
-			"occupied" : false,
-			"_id" : "2",
-			"user" : null
-		},
-		{
-			"ip" : "0.0.0.3",
-			"occupied" : false,
-			"_id" : "3",
-			"user" : null
-		}
-	]
-}
+[
+	{
+		"ip" : "0.0.0.1",
+		"occupied" : false,
+		"_id" : "B9407F30-F5F8-466E-AFF9-25556B57FE6D",
+		"user" : null
+	},
+	{
+		"ip" : "0.0.0.2",
+		"occupied" : false,
+		"_id" : "B3807A30-F6F1-466E-ADD3-12321B57FE6D",
+		"user" : null
+	},
+	{
+		"ip" : "0.0.0.3",
+		"occupied" : false,
+		"_id" : "B9406B91-A4DA-4FD4-APF9-25556B57DD6D",
+		"user" : null
+	}
+]
