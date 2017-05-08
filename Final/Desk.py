@@ -14,11 +14,11 @@ class Desk:
   directionPIN = 26
   
   # desk values
-  minHeight = 20
-  maxHeight = 70
+  minHeight = 29
+  maxHeight = 48
   
-  minHeightVal = 34
-  maxHeightVal = 560
+  minHeightVal = 555
+  maxHeightVal = 917
   
   # serial device
   serDev = '/dev/ttyACM0'
