@@ -4,6 +4,7 @@ from time import sleep
 import serial
 import queue
 import threading
+import json
 
 
 class Desk:
@@ -79,14 +80,14 @@ class Desk:
         pass
     
     
-
 if __name__ == "__main__":
   try:
     desk = Desk()
     server = SockServer(addr="0.0.0.0")
     print("Waiting for clients to connect.")
     while True:
-      desk.queue.put(server.recv()[1])
+      msg = server.recv()[1]
+      desk.queue.put(json.loads(msg)["height"])
   finally:
     GPIO.cleanup()
 
