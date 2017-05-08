@@ -43,7 +43,7 @@ class DeskServer:
 
     def get_in_use(self, beacon):
         desk = self.get_desk(beacon)
-        return desk['occupied']
+        return desk['desk']['occupied']
 
     def set_in_use(self, beacon, occupied):
         use = {'occupied' : occupied}
