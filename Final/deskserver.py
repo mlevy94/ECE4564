@@ -37,7 +37,7 @@ class DeskServer:
         return r.ok
 
     def get_desk(self, beacon):
-        r = requests.get(self.url + 'desk' + str(beacon))
+        r = requests.get(self.url + 'desk/' + str(beacon))
         desk = r.json()
         return desk
 

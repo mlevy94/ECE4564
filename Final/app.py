@@ -69,10 +69,10 @@ def update_desk_use(desk_beacon):
         abort(404)
     if not request.json:
         abort(400)
-	if 'occupied' in request.json and type(request.json['occupied']) is not bool:
-        abort(400)
-	desk[0]['occupied'] = request.json.get('occupied', desk[0]['occupied'])
-	return jsonify({'desk': desk[0]})
+        if 'occupied' in request.json and type(request.json['occupied']) is not bool:
+            abort(400)
+        desk[0]['occupied'] = request.json.get('occupied', desk[0]['occupied'])
+        return jsonify({'desk': desk[0]})
 
 @app.route('/desk/<int:desk_beacon>', methods=['DELETE'])
 def delete_desk(desk_beacon):
