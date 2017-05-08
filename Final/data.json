@@ -3,19 +3,19 @@
 		{
 			"ip" : "0.0.0.1",
 			"occupied" : false,
-			"_id" : 1,
+			"_id" : "1",
 			"user" : null
 		},
 		{
 			"ip" : "0.0.0.2",
 			"occupied" : false,
-			"_id" : 2,
+			"_id" : "2",
 			"user" : null
 		},
 		{
 			"ip" : "0.0.0.3",
 			"occupied" : false,
-			"_id" : 3,
+			"_id" : "3",
 			"user" : null
 		}
 	]
