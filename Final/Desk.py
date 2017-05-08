@@ -16,6 +16,9 @@ class Desk:
   minHeight = 20
   maxHeight = 70
   
+  minHeightVal = 34
+  maxHeightVal = 560
+  
   # serial device
   serDev = '/dev/ttyACM0'
   
@@ -35,7 +38,8 @@ class Desk:
     
   def getHeight(self):
     with self.lock:
-      return (self.currHeight / 1024) * (self.maxHeight - self.minHeight) + self.minHeight
+      return ((self.currHeight - self.minHeightVal) / (self.maxHeightVal - self.minHeightVal)) * \
+             (self.maxHeight - self.minHeight) + self.minHeight
   
   def setHeight(self, height):
     with self.lock:
