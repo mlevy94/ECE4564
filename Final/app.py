@@ -12,12 +12,11 @@ desks = db_client.A2_database.desk
 
 @app.route('/enter', methods=['POST'])
 def enter():
-    uuid = request.args.get('uuid', None)
-    height = request.args.get('height', None)
-    user = request.args.get('user', None)
-    desk = desks.find_one({'_id' : uuid})
-    import pdb; pdb.set_trace()
-    if desk['occupied']:
+    uuid = request.form.get('uuid', None)
+    height = request.form.get('height', None)
+    user = request.form.get('user', None)
+    desk = desks.find_one({'_id' : uuid}) 
+    if desk is None or desk['occupied']:
         return ''
     desks.update_one({'_id' : uuid}, { '$set': {'user': user, 'occupied' : True}})
     client = SockClient(desk['ip'])
@@ -26,12 +25,12 @@ def enter():
 
 @app.route('/exit', methods=['POST'])
 def exit_desk():
-    user = request.args.get('user', None)
-    uuid = request.args.get('uuid', None)
+    user = request.form.get('user', None)
+    uuid = request.form.get('uuid', None)
     desk = desks.find_one({'_id': uuid})
     if desk['user'] != user:
         return ''
     desks.update_one({'_id': uuid}, {'$set': {'user': None, 'occupied': False}})
     return ''
 
-app.run(host='0.0.0.0')
+app.run(host='0.0.0.0', debug=True)
