@@ -27,7 +27,7 @@
         android:id="@+id/tv"
         android:layout_width="200dp"
         android:layout_height="75dp"
-        android:text=""
+        android:text="Inches: 29"
         android:textAlignment="center"
         android:textSize="25dp"
         android:textColor="#ffffff"
@@ -61,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/username"
         android:layout_alignEnd="@+id/username" />
+
     <TextView
         android:layout_width="100dp"
         android:layout_height="50dp"

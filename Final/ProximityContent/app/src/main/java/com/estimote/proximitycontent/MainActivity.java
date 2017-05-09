@@ -1,5 +1,6 @@
 package com.estimote.proximitycontent;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,17 +10,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.NumberPicker;
 
+import com.estimote.proximitycontent.estimote.ApiCall;
 import com.estimote.proximitycontent.estimote.BeaconID;
 import com.estimote.proximitycontent.estimote.BeaconNotificationsManager;
 import com.estimote.proximitycontent.estimote.EstimoteCloudBeaconDetails;
 import com.estimote.proximitycontent.estimote.EstimoteCloudBeaconDetailsFactory;
 import com.estimote.proximitycontent.estimote.ProximityContentManager;
+import com.estimote.proximitycontent.estimote.RequestBuilder;
 import com.estimote.sdk.SystemRequirementsChecker;
 import com.estimote.sdk.cloud.model.Color;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.OkHttpClient;
+
+import static java.security.AccessController.getContext;
 
 //
 // Running into any issues? Drop us an email to: contact@estimote.com
@@ -34,28 +42,33 @@ public class MainActivity extends AppCompatActivity {
     static {
         BACKGROUND_COLORS.put(Color.MINT_COCKTAIL, android.graphics.Color.rgb(155, 186, 160));//Background of our mint green beacon
     }
-    String usr2;//username for use in database
+    String usr2 = "default_user";//username for use in database
     int numb2;// number for use in database
     private static final int BACKGROUND_COLOR_NEUTRAL = android.graphics.Color.rgb(160, 169, 172);// base background
 
     private ProximityContentManager proximityContentManager;
-
+    boolean b;
+    private OkHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);//creation of layout
 
+        client = new OkHttpClient();
+        numb2 = 29;
         NumberPicker np = (NumberPicker)findViewById(R.id.np);//number picker for number and textview for displaying number
         final TextView tv = (TextView) findViewById(R.id.tv);
 
-        np.setMinValue(0);
-        np.setMaxValue(500);
+        np.setMinValue(29);
+        np.setMaxValue(48);
         np.setWrapSelectorWheel(false);//min max and no wrapping
 
         final TextView tv2 = (TextView)findViewById(R.id.tv2);//proof of concept textview
         final EditText ed = (EditText)findViewById(R.id.username); //used for inputing username
         Button okbt = (Button)findViewById(R.id.okbt);//button creation
+
+
 
         okbt.setOnClickListener(new TextView.OnClickListener(){//on click button listener. saves username.
 
@@ -65,14 +78,16 @@ public class MainActivity extends AppCompatActivity {
                 usr2 = usrnme;
 
 
+
             }
 
         });
+
         np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange (NumberPicker picker,int oldVal, int newVal){
                 //Display the newly selected number from picker
-                tv.setText("Selected Number : " + newVal);
+                tv.setText("Inches : " + newVal);
                 numb2 = newVal;
             }
         });
@@ -100,11 +115,20 @@ public class MainActivity extends AppCompatActivity {
                     EstimoteCloudBeaconDetails beaconDetails = (EstimoteCloudBeaconDetails) content;
                     text = "You're in " + beaconDetails.getBeaconName() + "'s range!";
                     backgroundColor = BACKGROUND_COLORS.get(beaconDetails.getBeaconColor());
-
+                    if(!b) {
+                        b = true;
+                        attemptPost("http://172.30.107.133:5000/enter", usr2,"B9407F30-F5F8-466E-AFF9-25556B57FE6D", Integer.toString(numb2));
+                    }
 
                 } else {//if the beacon is not in range
                     text = "No beacons in range.";
                     backgroundColor = null;
+                    if(b)
+                    {
+                        b = false;
+                        attemptPost("http://172.30.107.133:5000/exit", usr2,"B9407F30-F5F8-466E-AFF9-25556B57FE6D", Integer.toString(numb2));
+                    }
+
                 }
                 beaconNotificationsManager.startMonitoring();//monitor in background for beacon
                 ((TextView) findViewById(R.id.textView)).setText(text);//set the text to be in range or not
@@ -142,5 +166,24 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         proximityContentManager.destroy();
 
+    }
+    private void attemptPost(String url,  final String user, final String uuid, final String height) {
+        new AsyncTask<String, Void, Void>() {
+            @Override
+            protected Void doInBackground(String... params) {
+
+                try {
+                    String response = ApiCall.POST(
+                            client,
+                            params[0],
+                            RequestBuilder.PostBody(user, uuid, height));
+
+                    Log.d("Response", response);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute(url);
     }
 }
