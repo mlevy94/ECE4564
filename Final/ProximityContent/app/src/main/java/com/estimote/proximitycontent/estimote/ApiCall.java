@@ -11,6 +11,7 @@ import okhttp3.Response;
  * Created by Thayne on 5/8/2017.
  */
 
+//builds request and posts 
 public class ApiCall {
 
     //POST network request
