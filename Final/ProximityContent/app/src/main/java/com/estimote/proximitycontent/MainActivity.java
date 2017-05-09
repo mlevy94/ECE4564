@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         proximityContentManager.destroy();
 
     }
+    // Handles posting user, uuid, and height values to the server/database
     private void attemptPost(String url,  final String user, final String uuid, final String height) {
         new AsyncTask<String, Void, Void>() {
             @Override
