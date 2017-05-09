@@ -7,6 +7,7 @@ import okhttp3.RequestBody;
  * Created by Thayne on 5/8/2017.
  */
 
+// builds the body of the post
 public class RequestBuilder {
 
     //Login request body
